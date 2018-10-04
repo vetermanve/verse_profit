@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" media="all"/>
+</head>
+<body>
+    <div id="content">
+        <div id="menu">
+            <a href="/">Main page</a> | <a href="/landing/contacts">Contacts</a>
+        </div>
+    {% block content %}
+    {% endblock %}
+    </div>
+</body>
+</html>
