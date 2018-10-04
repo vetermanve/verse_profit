@@ -19,3 +19,7 @@ body, html {
 #menu { 
     padding: 2em 0;
 }
+
+a, a:visited {
+    color: blue;
+}
