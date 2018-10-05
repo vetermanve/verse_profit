@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b267dedc05d81d47c626ea6b7f9049d5",
+    "content-hash": "26231f97d0162e9da8b07fc581336f79",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -524,11 +524,16 @@
         {
             "name": "verse/statistic",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vetermanve/verse_statistic.git",
+                "reference": "f736a5507aba7d9c0a3a8b5623f63e739ca88431"
+            },
             "dist": {
-                "type": "path",
-                "url": "../verse_statistic",
+                "type": "zip",
+                "url": "https://api.github.com/repos/vetermanve/verse_statistic/zipball/f736a5507aba7d9c0a3a8b5623f63e739ca88431",
                 "reference": "f736a5507aba7d9c0a3a8b5623f63e739ca88431",
-                "shasum": null
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.1",
@@ -546,16 +551,7 @@
                     "Verse\\Statistic\\": "src/Verse/Statistic"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Verse\\Statistic\\": "tests/Verse/Statistic"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -566,9 +562,7 @@
                 }
             ],
             "description": "Statistic library providing column-based pre-calculated statistic",
-            "transport-options": {
-                "symlink": true
-            }
+            "time": "2018-10-05T13:51:34+00:00"
         }
     ],
     "packages-dev": [],
