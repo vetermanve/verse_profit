@@ -14,7 +14,7 @@
             "" : "src/"    
         }
     },
-    "repositories-dev": [
+    "repositories": [
         {
             "type": "path",
             "url": "../verse_statistic",
@@ -28,5 +28,7 @@
         "twig/twig": "^2.5",
         "verse/statistic": "dev-master"
     },
-    "minimum-stability" : "stable"
+    "require-dev": {
+        "verse/statistic": "@dev"
+    }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "26231f97d0162e9da8b07fc581336f79",
+    "content-hash": "9d2edd2b023682017ba7de8a958d60a1",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -524,16 +524,11 @@
         {
             "name": "verse/statistic",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/vetermanve/verse_statistic.git",
-                "reference": "f736a5507aba7d9c0a3a8b5623f63e739ca88431"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/vetermanve/verse_statistic/zipball/f736a5507aba7d9c0a3a8b5623f63e739ca88431",
-                "reference": "f736a5507aba7d9c0a3a8b5623f63e739ca88431",
-                "shasum": ""
+                "type": "path",
+                "url": "../verse_statistic",
+                "reference": "5f5c88236be63c1cef9653a4fe3b855daa50ca36",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1",
@@ -551,7 +546,16 @@
                     "Verse\\Statistic\\": "src/Verse/Statistic"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Verse\\Statistic\\": "tests/Verse/Statistic"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -562,7 +566,9 @@
                 }
             ],
             "description": "Statistic library providing column-based pre-calculated statistic",
-            "time": "2018-10-05T13:51:34+00:00"
+            "transport-options": {
+                "symlink": true
+            }
         }
     ],
     "packages-dev": [],
