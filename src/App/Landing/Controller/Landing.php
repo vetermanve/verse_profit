@@ -3,21 +3,16 @@
 namespace App\Landing\Controller;
 
 use Base\Controller\BasicController;
+use Stats\Events;
 use Verse\Run\Util\Uuid;
 
 class Landing extends BasicController
 {
     public function index () 
     {
-        $statsId = $this->requestWrapper->getState('stats_id');
-        if (!$statsId) {
-            $statsId = Uuid::v4();
-            $this->requestWrapper->setState('stats_id', $statsId, 7200);
-        }
-        
         return $this->_render(__FUNCTION__, [
             'title' => 'Main Page',
-            'statsId' => $statsId,
+            'statsId' => $this->_scopeId,
         ]);
     }
     

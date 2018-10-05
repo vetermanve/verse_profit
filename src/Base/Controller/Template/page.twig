@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" media="all"/>
+</head>
+<body>
+    <div id="content">
+        <div id="menu">
+            {% for pageName, url in _pages %}
+                {% if (url == _currentPage ) %}
+                    <a href="{{ url }}" class="nav-current">{{ pageName }}</a>
+                {% else %}
+                    <a href="{{ url }}">{{ pageName }}</a>
+                {% endif %}
+                {% if not loop.last %} | {% endif %}
+            {% endfor %}
+        </div>
+    {% block content %}
+    {% endblock %}
+    </div>
+</body>
+</html>

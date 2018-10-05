@@ -3,6 +3,7 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Base\Render\RenderSetupComponent;
+use Stats\RunComponent\StatsClientSetup;
 use Verse\Run\Processor\SimplePageProcessor;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
@@ -15,8 +16,12 @@ $env = HttpEnvBuilder::buildContext();
 $schema = new RegularHttpRequestSchema();
 $schema->setProcessor(new SimplePageProcessor());
 $schema->setHttpEnv($env);
-$schema->addComponent(new RenderSetupComponent());
 
+// add custom components
+$schema->addComponent(new RenderSetupComponent());
+$schema->addComponent(new StatsClientSetup());
+
+// run context
 $context = new RunContext();
 $context->fill([
     RunContext::HOST     => $_SERVER['HTTP_HOST'],

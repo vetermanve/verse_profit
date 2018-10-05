@@ -22,4 +22,9 @@ body, html {
 
 a, a:visited {
     color: blue;
+    text-decoration: none;
+}
+
+a.nav-current, a:visited.nav-current  {
+    color: black;
 }

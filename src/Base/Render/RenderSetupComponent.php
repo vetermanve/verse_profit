@@ -11,11 +11,8 @@ class RenderSetupComponent extends RunComponentProto
 
     public function run()
     {
-        $layoutDir = __DIR__.'/Twig/Layouts';
-        Env::getContainer()->setModule(RendererInterface::class, function () use ($layoutDir) {
-            $renderer = new TwigRenderer();
-            $renderer->addLayoutDir($layoutDir);
-            return $renderer;
+        Env::getContainer()->setModule(RendererInterface::class, function (){
+            return new TwigRenderer();
         });
     }
 }

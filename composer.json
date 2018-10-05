@@ -14,10 +14,19 @@
             "" : "src/"    
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../verse_statistic",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "verse/run" : "^0.0",
         "twig/twig": "^2.5",
-        "verse/statistic": "dev-master"
+        "verse/statistic": "@dev"
     },
     "minimum-stability" : "stable"
 }
