@@ -4,25 +4,10 @@
 namespace App\Stats\Controller;
 
 
-use Base\Render\RendererInterface;
-use Verse\Di\Env;
-use Verse\Run\Controller\SimpleController;
+use Base\Controller\BasicController;
 
-class Stats extends SimpleController
+class Stats extends BasicController
 {
-    /**
-     * @var RendererInterface
-     */
-    private $_renderer;
-
-    /**
-     * Landing constructor.
-     */
-    public function __construct()
-    {
-        $this->_renderer = Env::getContainer()->bootstrap(RendererInterface::class);
-    }
-    
     public function view () 
     {
         return $this->_render(__FUNCTION__, [
@@ -37,12 +22,8 @@ class Stats extends SimpleController
         ]);
     }
 
-    private function _render($template, $data = []) {
-        return $this->_renderer->render($template, $data,
-            'page',
-            [
-                __DIR__.'/../Template',
-            ]
-        );
+    protected function getClassDirectory()
+    {
+        return __DIR__;
     }
 }

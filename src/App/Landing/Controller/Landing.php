@@ -2,26 +2,11 @@
 
 namespace App\Landing\Controller;
 
-use Base\Render\RendererInterface;
-use Verse\Di\Env;
-use Verse\Run\Controller\SimpleController;
+use Base\Controller\BasicController;
 use Verse\Run\Util\Uuid;
 
-class Landing extends SimpleController
+class Landing extends BasicController
 {
-    /**
-     * @var RendererInterface
-     */
-    private $_renderer;
-
-    /**
-     * Landing constructor.
-     */
-    public function __construct()
-    {
-        $this->_renderer = Env::getContainer()->bootstrap(RendererInterface::class);
-    }
-
     public function index () 
     {
         $statsId = $this->requestWrapper->getState('stats_id');
@@ -53,13 +38,9 @@ class Landing extends SimpleController
             'statsId' => $statsId,
         ]);
     }
-    
-    private function _render($template, $data = []) {
-        return $this->_renderer->render($template, $data,
-            'page',
-            [
-                __DIR__.'/../Template',
-            ]
-        );
+
+    protected function getClassDirectory()
+    {
+        return __DIR__;
     }
 }
