@@ -3,8 +3,21 @@
 {% block content %}
     <h1>{{ title }}</h1>
     <p>
-        Your user id: {{ _userId }} <br>
-        Recalculate stats <a href="/stats/calculate">on separate page</a> or <br>
-        Recalculate stats <a href="?recalculate=1">and see calculation results</a>
+        {#Your user id: {{ _userId }} <br>#}
+        Recalculate stats <a href="/stats/calculate">on separate page</a> or <a href="?recalculate=1">and see calculation results</a>
     </p>
+    <p>
+        {% for id, statsName in stats %}
+            {% if (id == statsId ) %}
+                <a href="?statsId={{ id }}" class="nav-current"><h2>{{ statsName | capitalize }}</h2></a>
+            {% else %}
+                <a href="?statsId={{ id }}"><h2>{{ statsName | capitalize }}</h2></a>
+            {% endif %}
+            {% if not loop.last %} | {% endif %}
+        {% endfor %} 
+    </p>
+    <p>
+        Events: {{ fields | join(', ') }}
+    </p>
+    
 {% endblock %}

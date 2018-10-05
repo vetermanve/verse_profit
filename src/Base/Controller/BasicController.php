@@ -37,7 +37,7 @@ abstract class BasicController extends BaseControllerProto
     protected function _pages() {
         return [
             'Home' => '/',
-            'Test Actions' => '/stats/actions',
+            'Test Actions' => '/stats-actions',
             'Stats View' => '/stats/view',
             'All Site Stats' => '/stats/site',
             'Contacts' => '/landing/contacts',
@@ -58,9 +58,11 @@ abstract class BasicController extends BaseControllerProto
         }
 
         if (!method_exists($this, $this->method)) {
-            return $this->_renderer->render('404', [
+            $data = [
                 'url' => $this->requestWrapper->getResource(),
-            ],
+            ] + $this->_getRenderDefaultData();
+            
+            return $this->_renderer->render('404',  $data,
                 'page',
                 [
                     __DIR__ . '/Template',
@@ -84,14 +86,18 @@ abstract class BasicController extends BaseControllerProto
     {
         return true;
     }
-
-    protected function _render($template, $data = [])
-    {
-        $data += [
+    
+    protected function _getRenderDefaultData() : array {
+        return [
             '_userId' => $this->_userId,
             '_pages' => $this->_pages(),
             '_currentPage' => $this->requestWrapper->getResource(),
         ];
+    }
+
+    protected function _render($template, $data = [])
+    {
+        $data += $this->_getRenderDefaultData();
 
         return $this->_renderer->render($template, $data,
             'page',

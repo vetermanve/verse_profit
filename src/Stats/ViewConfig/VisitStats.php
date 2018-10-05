@@ -28,6 +28,7 @@ class VisitStats extends AbstractStatistic
     public function getFields () 
     {
         return [
+            Events::PAGE_VISIT,
             Events::VISIT_CONTACTS,  
             Events::VISIT_MAINPAGE,
             Events::VISIT_STATS_ACTIONS,

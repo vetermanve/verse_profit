@@ -7,13 +7,15 @@ use Verse\Statistic\Core\Schema\FileBasedStatsSchema;
 use Verse\Statistic\Core\StatProcessor;
 use Verse\Statistic\Core\StatsContainer;
 use Verse\Statistic\Core\StatsContext;
-use Verse\Statistic\Core\Strategy\Compress\CompressResultsByStatRecordUniqId;
 
-class SiteStatsCalculator
+class StatsCalculationTask
 {
     protected $_isTestRun = false;
-    
-    
+
+
+    /**
+     * @return \Verse\Statistic\Core\StatsContainer
+     */
     public function run () 
     {
         $context = new StatsContext();
@@ -29,11 +31,9 @@ class SiteStatsCalculator
         $processor->setContext($context);
         $processor->addSchema(new FileBasedStatsSchema());
 
-        $processor->addStrategy(new CompressResultsByStatRecordUniqId());
-        
         $processor->run();
         
-        return $container->data;
+        return $container;
     }
 
     /**
