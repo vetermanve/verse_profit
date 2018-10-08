@@ -7,18 +7,20 @@
 </head>
 <body>
     <div id="content">
-        <div id="menu">
-            {% for pageName, url in _pages %}
-                {% if (url == _currentPage ) %}
-                    <a href="{{ url }}" class="nav-current">{{ pageName }}</a>
-                {% else %}
-                    <a href="{{ url }}">{{ pageName }}</a>
-                {% endif %}
-                {% if not loop.last %} | {% endif %}
-            {% endfor %}
+        <div id="content-pad">
+            <div id="menu">
+                {% for pageName, url in _pages %}
+                    {% if (url == _currentPage ) %}
+                        <a href="{{ url }}" class="nav-current">{{ pageName }}</a>
+                    {% else %}
+                        <a href="{{ url }}">{{ pageName }}</a>
+                    {% endif %}
+                    {% if not loop.last %} | {% endif %}
+                {% endfor %}
+            </div>
+        {% block content %}
+        {% endblock %}
         </div>
-    {% block content %}
-    {% endblock %}
     </div>
 </body>
 </html>
