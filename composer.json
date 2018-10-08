@@ -14,7 +14,7 @@
             "" : "src/"    
         }
     },
-    "repositories": [
+    "repositories-dev": [
         {
             "type": "path",
             "url": "../verse_statistic",
