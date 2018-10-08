@@ -32,8 +32,19 @@ class VisitStats extends AbstractStatistic
             Events::VISIT_CONTACTS,  
             Events::VISIT_MAINPAGE,
             Events::VISIT_STATS_ACTIONS,
-            Events::VISIT_GENERATED_STATS_VIEW,
-            Events::VISIT_SITE_STATS_VIEW,
+            Events::VISIT_SCOPED_STATS,
+            Events::VISIT_SITE_STATS,
         ];
-    }   
+    }
+    
+    public function getFieldNames ()
+    {
+        return [
+            Events::PAGE_VISIT => 'Pages Visit',
+            Events::VISIT_CONTACTS => 'Contact Page Visits',
+            Events::VISIT_MAINPAGE => 'Main Page Visits',
+            Events::VISIT_SCOPED_STATS => 'Scoped Stats Page Visits', 
+            Events::VISIT_SITE_STATS => 'All Stats Page Visits',
+        ];
+    }
 }

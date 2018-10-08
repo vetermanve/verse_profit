@@ -10,10 +10,9 @@ class Events
     const VISIT_CONTACTS      = 'visit_contacts';
     const VISIT_STATS_ACTIONS = 'visit_st_actions';
 
-    const VISIT_GENERATED_STATS_VIEW = 'visit_st_gen_view';
-    const VISIT_SITE_STATS_VIEW      = 'visit_st_site_view';
+    const VISIT_SCOPED_STATS = 'visit_scoped_stats';
+    const VISIT_SITE_STATS   = 'visit_site_stats';
 
     const STATS_GENERATION   = 'st_generation';
     const STATS_REGENERATION = 'st_regeneration';
-
 }

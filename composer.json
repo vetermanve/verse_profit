@@ -26,9 +26,6 @@
     "require": {
         "verse/run" : "^0.0",
         "twig/twig": "^2.5",
-        "verse/statistic": "dev-master"
-    },
-    "require-dev": {
-        "verse/statistic": "@dev"
+        "verse/statistic": "^0.0.1"
     }
 }

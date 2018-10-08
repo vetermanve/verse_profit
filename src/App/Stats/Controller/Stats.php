@@ -5,11 +5,13 @@ namespace App\Stats\Controller;
 
 
 use Base\Controller\BasicController;
+use Stats\Events;
 use Stats\StatsConfig;
 use Stats\StatsTasks\StatsCalculationTask;
 use Verse\Statistic\Configuration\Grouping\BasicGroping;
 use Verse\Statistic\Core\Model\StatRecord;
 use Verse\Statistic\Core\Model\TimeScale;
+use Verse\Statistic\View\Dater;
 
 class Stats extends BasicController
 {
@@ -18,6 +20,7 @@ class Stats extends BasicController
     public function view () 
     {
         $this->_statsScopeId = $this->_scopeId;
+        $this->_statsClient->event(Events::VISIT_SCOPED_STATS, $this->_userId, $this->_scopeId);
             
         return $this->site();
     }
@@ -26,6 +29,10 @@ class Stats extends BasicController
     {
         if ($this->p('recalculate')) {
             $this->_recalculateSiteStats();
+        }
+        
+        if (!$this->_statsScopeId) {
+            $this->_statsClient->event(Events::VISIT_SITE_STATS, $this->_userId, $this->_scopeId);
         }
 
         $stFactory = StatsConfig::getStatisticFactory();
@@ -58,6 +65,21 @@ class Stats extends BasicController
         
         $keys = array_keys(reset($statsData));
         
+        $grouping = StatsConfig::getGroupingFactory()->getGroupingModelById(BasicGroping::TYPE);
+        
+        $dater = new Dater();
+        $dater->setStatisticConfiguration($statistic);
+        $dater->setGrouping($grouping);
+        $dater->setCurrentView();
+        $dater->setRawData($statsData);
+        $dater->setTimeScale(TimeScale::HOUR);
+        $dater->setFromTime(strtotime('-2 days'));
+        $dater->setToTime(time());
+        
+        $dater->buildViewData();
+        
+        $data = $dater->getResultData();
+        
         return $this->_render('view', [
             'title' => 'All site statistic',
             'stats' => $stIdToName,
@@ -66,6 +88,10 @@ class Stats extends BasicController
             'userId' => $this->_userId,
             'data' => $statsData,
             'keys' => $keys,
+            'table' => $data[Dater::TABLE],
+            'rows' => $dater->getRowsNamed(),
+            'names' => $data[Dater::COLUMN_NAMES],
+            'seriesEncoded' => json_encode($data[Dater::SERIES], JSON_UNESCAPED_UNICODE),
         ]);
     }
     

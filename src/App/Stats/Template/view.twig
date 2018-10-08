@@ -1,6 +1,19 @@
 {% extends _layout %}
 
 {% block content %}
+    <style type="text/css">
+        #container {
+            min-width: 310px;
+            max-width: 1200px;
+            height: 400px;
+            margin: 0 auto
+        }
+    </style>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
     <h1>{{ title }}</h1>
     <p>
         {#Your user id: {{ _userId }} <br>#}
@@ -19,7 +32,143 @@
     <p>
         Events: {{ fields | join(', ') }}
     </p>
+
     <div>
+        <h2>Ready to use Charts</h2>
+        <div id="container"></div>
+        <script type="text/javascript">
+
+
+          var title = 'Chart';
+          //        var ax = <?//=json_encode(array_values($dater->getRowsNamed())) ?>//;
+          var cSeries = {{ seriesEncoded | raw }};
+          var minInterval = 3600*1000;
+          var defaultGrType = 'line';
+          var tooltipEnabled = true;
+
+          Highcharts.setOptions({
+            global: {
+              timezoneOffset:  -180
+            }
+          });
+
+          Highcharts.chart('container',{
+            chart: {
+              type: defaultGrType,
+              animation: false,
+              alignTicks: false
+            },
+            title: {
+              text: title,
+              y: 50
+
+            },
+            xAxis: {
+              //                categories: ax,
+              labels: {
+                rotation: -45,
+                style: {
+                  fontSize: '13px',
+                  fontFamily: 'Verdana, sans-serif'
+                }
+                ,
+                formatter: function() {
+                  var form = Highcharts.dateFormat('%H%M', this.value) == '0000' ?  '%b %e' : '%H:%M';
+                  return  Highcharts.dateFormat(form, this.value);
+                }//,
+                //autoRotation: [-45]
+              },
+              type: 'datetime',
+              tickPixelInterval: 40,
+
+              minTickInterval: minInterval,
+              minorGridLineWidth: 1,
+              minorTickInterval: 14400000,
+              //                minorTickColor: '#111',
+              minorTickWidth: 0,
+              minorTickLength: 10
+              //                minorTickPosition: 'inside'
+            },
+            yAxis: {
+              title: {
+                text: null
+              },
+              labels: {
+                align: 'left',
+                x: 0,
+                y: -2
+              },
+              min : 0
+            },
+            legend : {
+              enabled: tooltipEnabled,
+              align: 'left',
+              verticalAlign: 'top',
+              floating: true
+            },
+            tooltip: {
+              shared: tooltipEnabled,
+              crosshairs: tooltipEnabled,
+              animation : tooltipEnabled,
+              enabled: true
+            },
+            plotOptions: {
+              dataLabels: {
+                enabled: true
+              },
+              animation : false ,
+              series: {animation: false},
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              },
+              marker: {
+                lineWidth: 1
+              },
+              area: {
+                stacking: 'normal',
+                lineColor: '#666666',
+                lineWidth: 1,
+                marker: {
+                  lineWidth: 1,
+                  lineColor: '#666666'
+                }
+              }
+            },
+            series: cSeries
+          });
+        </script>
+    </div>
+    <div>
+        <h2>Ready to use table data:</h2>
+        <table>
+            <thead>
+            <tr>
+                <td>Time</td>
+                {% for name in names %}
+                    <td>{{ name }}</td>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for rowTime, rowName in rows %}
+                <tr>
+                    <td>{{ rowName }}</td>
+                    {% for id, name in names %}
+                        
+                        {% if table[rowTime][id] %}
+                            <td>{{ table[rowTime][id] | join(', ') }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h2>Raw data from DB:</h2>
         <table>
             <thead>
                 <tr>
@@ -32,7 +181,7 @@
                 {% for rec in data %}
                 <tr>
                     {% for item in rec %}
-                        <td>{{ item }}</td>    
+                        <td>{{ item | join(', ') }}</td>    
                     {% endfor %}
                 </tr>
                 {% endfor %}
