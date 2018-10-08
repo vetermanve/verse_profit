@@ -14,7 +14,7 @@ class StatsCalculationTask
 
 
     /**
-     * @return \Verse\Statistic\Core\StatsContainer
+     * @return array
      */
     public function run()
     {
@@ -26,16 +26,19 @@ class StatsCalculationTask
         $context->statsStorage = StatsConfig::getStatsStorage();
         $context->uniqueStorage = StatsConfig::getUniqueStorage();
 
-        $container = new StatsContainer();
+        $results = [];
         
-        $processor = new StatProcessor();
-        $processor->setContainer($container);
-        $processor->setContext($context);
-        $processor->addSchema(new BasicStatsSchema());
-
-        $processor->run();
-
-        return $container;
+        do {
+            $container = new StatsContainer();
+            $processor = new StatProcessor();
+            $processor->setContainer($container);
+            $processor->setContext($context);
+            $processor->addSchema(new BasicStatsSchema());
+            $processor->run();
+            $results = \array_merge($results, array_values($container->results));
+        } while ($container->evensContainer && $container->evensContainer->events);
+        
+        return $results;
     }
 
     /**

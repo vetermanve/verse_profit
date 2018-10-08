@@ -72,19 +72,19 @@ class Stats extends BasicController
     public function calculate () 
     {
         $task = new StatsCalculationTask();
-        $container = $task->run();
+        $data = $task->run();
 
-        uasort($container->data, function ($rec1, $rec2) {
+        uasort($data, function ($rec1, $rec2) {
             return $rec1[StatRecord::SCOPE_ID].$rec1[StatRecord::TIME] > $rec2[StatRecord::SCOPE_ID].$rec2[StatRecord::TIME];
         });
 
-        array_walk($container->data, function (&$rec) {
+        array_walk($data, function (&$rec) {
             $rec[StatRecord::TIME] = \date('c', $rec[StatRecord::TIME]);
         });
         
         return $this->_render(__FUNCTION__, [
-            'title' => 'Statistic calculation process',
-            'results' => json_encode($container->data, JSON_PRETTY_PRINT),
+            'title' => 'Statistic calculation results',
+            'results' => json_encode(array_values($data), JSON_PRETTY_PRINT),
         ]);
     }
     

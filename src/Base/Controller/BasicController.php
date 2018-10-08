@@ -37,9 +37,9 @@ abstract class BasicController extends BaseControllerProto
     protected function _pages() {
         return [
             'Home' => '/',
-            'Test Actions' => '/stats-actions',
-            'Stats View' => '/stats/view',
-            'All Site Stats' => '/stats/site',
+            // 'Test Actions' => '/stats-actions',
+            'Current Scope Stats' => '/stats/view',
+            'All Scopes Stats' => '/stats/site',
             'Contacts' => '/landing/contacts',
         ];
     }
