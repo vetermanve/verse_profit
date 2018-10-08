@@ -1,9 +1,9 @@
 <?php
 
 namespace Stats\StatsTasks;
- 
+
 use Stats\StatsConfig;
-use Verse\Statistic\Core\Schema\FileBasedStatsSchema;
+use Verse\Statistic\Core\Schema\BasicStatsSchema;
 use Verse\Statistic\Core\StatProcessor;
 use Verse\Statistic\Core\StatsContainer;
 use Verse\Statistic\Core\StatsContext;
@@ -16,23 +16,25 @@ class StatsCalculationTask
     /**
      * @return \Verse\Statistic\Core\StatsContainer
      */
-    public function run () 
+    public function run()
     {
         $context = new StatsContext();
-        $context->set(StatsContext::FILE_STATS_DIRECTORY, StatsConfig::getStatFilesDirectory());
-        
+
         $context->statisticFactory = StatsConfig::getStatisticFactory();
         $context->groupingFactory = StatsConfig::getGroupingFactory();
-        
+        $context->eventsStream = StatsConfig::getEventStream();
+        $context->statsStorage = StatsConfig::getStatsStorage();
+        $context->uniqueStorage = StatsConfig::getUniqueStorage();
+
         $container = new StatsContainer();
         
         $processor = new StatProcessor();
         $processor->setContainer($container);
         $processor->setContext($context);
-        $processor->addSchema(new FileBasedStatsSchema());
+        $processor->addSchema(new BasicStatsSchema());
 
         $processor->run();
-        
+
         return $container;
     }
 

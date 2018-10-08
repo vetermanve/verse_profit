@@ -7,8 +7,9 @@ namespace App\Stats\Controller;
 use Base\Controller\BasicController;
 use Stats\StatsConfig;
 use Stats\StatsTasks\StatsCalculationTask;
+use Verse\Statistic\Configuration\Grouping\BasicGroping;
 use Verse\Statistic\Core\Model\StatRecord;
-use Verse\Statistic\ReadClient\ReadClient;
+use Verse\Statistic\Core\Model\TimeScale;
 
 class Stats extends BasicController
 {
@@ -28,17 +29,34 @@ class Stats extends BasicController
         }
 
         $stFactory = StatsConfig::getStatisticFactory();
+        $allStats = $stFactory->getStats();
         
         $statistic = null;
         
-        if ($statsId = $this->p('statsId')) {
-            $statistic = $stFactory->getStatsById($statsId);
+        if (($statsId = $this->p('statsId')) && isset($allStats[$statsId])) {
+            $statistic = $allStats[$statsId];
+        } else {
+            $statistic = reset($allStats);
+            $statsId = $statistic->getId();
         }
         
-        $availableStat = new ReadClient();
-        $stIdToName = $availableStat->getAllStatistics($stFactory);
+        $stIdToName = [];
+        foreach ($allStats as $statistic) {
+            $stIdToName[$statistic->getId()] = $statistic->getName();
+        }
         
         $fields = $statistic ? $statistic->getFields() : [];
+        $eventIds = array_map('crc32', $fields);
+        
+        $statsData = StatsConfig::getStatsStorage()->findRecords($eventIds, 0, time() + 3600 *24, TimeScale::HOUR, BasicGroping::TYPE, [], $this->_statsScopeId);
+        
+        array_walk($statsData, function (&$rec) {
+            ksort($rec);
+            unset($rec['id']);
+            $rec['date'] = date('c', $rec[StatRecord::TIME]);
+        });
+        
+        $keys = array_keys(reset($statsData));
         
         return $this->_render('view', [
             'title' => 'All site statistic',
@@ -46,6 +64,8 @@ class Stats extends BasicController
             'statsId' => $statsId,
             'fields' => $fields,
             'userId' => $this->_userId,
+            'data' => $statsData,
+            'keys' => $keys,
         ]);
     }
     

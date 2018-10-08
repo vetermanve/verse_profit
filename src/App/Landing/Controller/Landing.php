@@ -33,6 +33,17 @@ class Landing extends BasicController
             'statsId' => $statsId,
         ]);
     }
+    
+    public function regenerateUserId () 
+    {
+        $this->_userId = Uuid::v4();
+        $this->requestWrapper->setState('user_id', $this->_userId, 3600 * 24 * 365);
+        
+        return $this->_render('regenerate', [
+            'title' => 'Regenerated!',
+            'statsId' => $this->_userId,
+        ]);
+    }
 
     protected function getClassDirectory()
     {

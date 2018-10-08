@@ -16,7 +16,7 @@ body, html {
     padding: 0 2em;
 }
 
-#menu { 
+#menu {
     padding: 1.7em 0;
 }
 
@@ -25,7 +25,24 @@ a, a:visited {
     text-decoration: none;
 }
 
-a.nav-current, a:visited.nav-current  {
+a.nav-current, a:visited.nav-current {
     color: black;
     /*text-decoration: underline;*/
+}
+
+pre {
+    text-align: left;
+}
+
+table, tr {
+    margin: 0;
+    padding: 0;
+    border-spacing: 0;
+}
+
+td {
+    margin: 0;
+    padding: 0.5em;
+    text-align: left;
+    border: 1px inset #333;
 }

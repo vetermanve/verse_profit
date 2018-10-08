@@ -4,7 +4,7 @@
     <h1>{{ title }}</h1>
     <p>
         {#Your user id: {{ _userId }} <br>#}
-        Recalculate stats <a href="/stats/calculate">on separate page</a> or <a href="?recalculate=1">and see calculation results</a>
+        Recalculate stats <a href="/stats/calculate" target="_blank">on separate page</a> or <a href="?recalculate=1">and see calculation results</a>
     </p>
     <p>
         {% for id, statsName in stats %}
@@ -19,5 +19,25 @@
     <p>
         Events: {{ fields | join(', ') }}
     </p>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                {% for key in keys %}
+                    <td>{{ key }}</td>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for rec in data %}
+                <tr>
+                    {% for item in rec %}
+                        <td>{{ item }}</td>    
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     
 {% endblock %}
