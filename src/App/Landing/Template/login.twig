@@ -1,0 +1,24 @@
+{% extends _layout %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <p>
+    {% if(authorised == false) %}
+    <form action="/landing/login" method="post">
+        <input type="text" placeholder="Login" name="login" value="{{ login }}"/><br>
+        <input type="password" placeholder="Password" name="password"/><br>
+        <input type="submit" value="Войти"/><br>
+    </form>
+    Если у тебе еще нет аккаунта <a href="/stats/view">Зарегистрирйся</a>
+    {% else %}
+        Ты успещно авторизован! <br>
+        <small>Пользователь {{ _userId }}, семья {{ _scopeId }}.</small>
+        <form action="/landing/logout" method="post">
+            <input type="submit" value="Выйти"/><br>
+        </form>
+    {% endif %}
+    </p>
+    <p>
+       
+    </p>
+{% endblock %}

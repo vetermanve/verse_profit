@@ -1,10 +1,10 @@
 <?php
 
 chdir(__DIR__.'/..');
-require_once 'vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
+use Base\Auth\SecurityDataComponent;
 use Base\Render\RenderSetupComponent;
-use Stats\RunComponent\StatsClientSetup;
 use Verse\Run\Processor\SimplePageProcessor;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
@@ -20,7 +20,7 @@ $schema->setHttpEnv($env);
 
 // add custom components
 $schema->addComponent(new RenderSetupComponent());
-$schema->addComponent(new StatsClientSetup());
+$schema->addComponent(new SecurityDataComponent());
 
 // run context
 $context = new RunContext();
@@ -29,7 +29,6 @@ $context->fill([
     RunContext::IDENTITY => ('http.'.getmypid() . '@' . gethostname()),
     RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true
 ]);
-
 
 $context->set(RunContext::GLOBAL_CONFIG, []);
 

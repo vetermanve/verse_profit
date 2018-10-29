@@ -1,31 +1,21 @@
 {
-    "name": "verse/verse_statistic_example",
-    "description": "Site built upon Verse Framework and demonstrating work of Verse Statistic",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Denisov Mikhail",
-            "email": "manwebdev@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "" : "src/"    
-        }
-    },
-    "repositories-dev": [
-        {
-            "type": "path",
-            "url": "../verse_statistic",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
-    "require": {
-        "verse/run" : "^0.0",
-        "twig/twig": "^2.5",
-        "verse/statistic": "^0.0.1"
+  "name": "vetermanve/goals_means",
+  "description": "Site for tracking goals and means.",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Denisov Mikhail",
+      "email": "manwebdev@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    }
+  },
+  "require": {
+    "verse/run": "^0.0",
+    "twig/twig": "^2.5"
+  }
 }

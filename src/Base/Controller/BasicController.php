@@ -2,82 +2,75 @@
 
 namespace Base\Controller;
 
+use Base\Auth\ChannelSecurityWrapperFactory;
+use Base\Auth\SecurityWrapper\ChannelStateSecurityWrapperInterface;
+use Base\Auth\StateProvider\RunRequestWrapperStateProvider;
 use Base\Render\RendererInterface;
-use Stats\Events;
 use Verse\Di\Env;
 use Verse\Run\Controller\BaseControllerProto;
-use Verse\Run\Util\Uuid;
-use Verse\Statistic\WriteClient\StatsClientInterface;
 
 abstract class BasicController extends BaseControllerProto
 {
+    const STATE_KEY_USER_ID  = 'user_id';
+    const STATE_KEY_SCOPE_ID = 'scope_id';
+    
+    const DEFAULT_USER_ID = 0;
+
     /**
      * @var RendererInterface
      */
     protected $_renderer;
 
-    protected $_userId = 0;
+    protected $_userId = self::DEFAULT_USER_ID;
 
     protected $_scopeId;
 
     /**
-     * @var StatsClientInterface
+     * @var ChannelStateSecurityWrapperInterface
      */
-    protected $_statsClient;
+    protected $_secureState;
 
-    /**
-     * Landing constructor.
-     */
-    public function __construct()
+    protected function _pages()
     {
-        $this->_renderer = Env::getContainer()->bootstrap(RendererInterface::class);
-        $this->_statsClient = Env::getContainer()->bootstrap(StatsClientInterface::class);
-    }
-    
-    protected function _pages() {
         return [
-            'Home' => '/',
-            // 'Test Actions' => '/stats-actions',
-            'Current Scope Stats' => '/stats/view',
-            'All Scopes Stats' => '/stats/site',
+            'Home'     => '/',
             'Contacts' => '/landing/contacts',
         ];
     }
 
     public function run()
     {
-        if (!$this->_userId = $this->requestWrapper->getState('user_id')) {
-            $this->_userId = Uuid::v4();
-            $this->requestWrapper->setState('user_id', $this->_userId, 3600 * 24 * 365);
+        /// get renderer
+        $this->_renderer = Env::getContainer()->bootstrap(RendererInterface::class);
+
+        // get security state layer
+        $securityFactory = Env::getContainer()->bootstrap(ChannelSecurityWrapperFactory::class);
+        /* @var $securityFactory ChannelSecurityWrapperFactory */
+        $stateProviderWrapper = new RunRequestWrapperStateProvider($this->requestWrapper);
+        $this->_secureState = $securityFactory->getWrapper($stateProviderWrapper);
+        
+        // load user_id and state
+        if ($this->requestWrapper->getState(self::STATE_KEY_USER_ID)) {
+            $this->_userId = $this->_secureState->getState(self::STATE_KEY_USER_ID, self::DEFAULT_USER_ID);
         }
 
-        $this->_scopeId = $this->requestWrapper->getState('stats_id');
-        if (!$this->_scopeId) {
-            $this->_scopeId = Uuid::v4();
-            $this->requestWrapper->setState('stats_id', $this->_scopeId, 3600 * 24 * 30);
+        if ($this->requestWrapper->getState(self::STATE_KEY_SCOPE_ID)) {
+            $this->_scopeId = $this->_secureState->getState(self::STATE_KEY_SCOPE_ID);
         }
 
+        // check user_id
         if (!method_exists($this, $this->method)) {
             $data = [
-                'url' => $this->requestWrapper->getResource(),
-            ] + $this->_getRenderDefaultData();
-            
-            return $this->_renderer->render('404',  $data,
+                    'url' => $this->requestWrapper->getResource(),
+                ] + $this->_getRenderDefaultData();
+
+            return $this->_renderer->render('404', $data,
                 'page',
                 [
                     __DIR__ . '/Template',
                 ]
             );
         }
-
-        $this->_statsClient->event(
-            Events::PAGE_VISIT, 
-            $this->_userId, 
-            $this->_scopeId, 
-            [
-                'page' => $this->requestWrapper->getResource(),
-            ]
-        );
 
         return $this->{$this->method}();
     }
@@ -86,11 +79,13 @@ abstract class BasicController extends BaseControllerProto
     {
         return true;
     }
-    
-    protected function _getRenderDefaultData() : array {
+
+    protected function _getRenderDefaultData() : array
+    {
         return [
-            '_userId' => $this->_userId,
-            '_pages' => $this->_pages(),
+            '_userId'      => $this->_userId,
+            '_scopeId'      => $this->_scopeId,
+            '_pages'       => $this->_pages(),
             '_currentPage' => $this->requestWrapper->getResource(),
         ];
     }
