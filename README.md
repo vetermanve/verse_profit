@@ -1,2 +1,2 @@
-# verse_example
-Example of site based on Verse Framework
+# Goals and Means
+Site for couting goals and means, based on Verse Framework
