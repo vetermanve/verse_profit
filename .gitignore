@@ -2,3 +2,5 @@
 vendor/
 stats-data/
 composer.lock
+/semantic/
+/node_modules/
