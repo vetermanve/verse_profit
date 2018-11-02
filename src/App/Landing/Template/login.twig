@@ -1,15 +1,53 @@
 {% extends _layout %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
-    <p>
+    <style type="text/css">
+        body > .grid {
+            height: 100%;
+        }
+
+        #login-form .column {
+            max-width: 450px;
+        }
+
+        #login-form {
+            height: 80%;
+        }
+    </style>
     {% if(authorised == false) %}
-    <form action="/landing/login" method="post">
-        <input type="text" placeholder="Login" name="login" value="{{ login }}"/><br>
-        <input type="password" placeholder="Password" name="password"/><br>
-        <input type="submit" value="Войти"/><br>
-    </form>
-    Если у тебе еще нет аккаунта <a href="/stats/view">Зарегистрирйся</a>
+        <div class="ui middle aligned center aligned grid" id="login-form">
+            <div class="column">
+                <h2 class="ui teal image header">
+                    <img src="assets/images/logo.png" class="image">
+                    <div class="content">
+                        Войдите в систему
+                    </div>
+                </h2>
+                <form class="ui large form" action="/landing/login">
+                    <div class="ui stacked segment">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="user icon"></i>
+                                <input type="text" name="email" value="{{ login }}" placeholder="E-mail address">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="password" name="password" placeholder="Password">
+                            </div>
+                        </div>
+                        <input class="ui fluid large teal submit button" type="submit" value="Войти"/>
+                    </div>
+
+                    <div class="ui error message"></div>
+                </form>
+
+                <div class="ui message">
+                    Если у тебе еще нет аккаунта <a href="/stats/view">Зарегистрирйся</a>
+                </div>
+            </div>
+        </div>
     {% else %}
         Ты успещно авторизован! <br>
         <small>Пользователь {{ _userId }}, семья {{ _scopeId }}.</small>
@@ -17,8 +55,4 @@
             <input type="submit" value="Выйти"/><br>
         </form>
     {% endif %}
-    </p>
-    <p>
-       
-    </p>
 {% endblock %}
