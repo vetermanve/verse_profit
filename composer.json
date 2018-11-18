@@ -16,6 +16,7 @@
   },
   "require": {
     "verse/run": "^0.0",
-    "twig/twig": "^2.5"
+    "twig/twig": "^2.5",
+    "verse/storage": "^0.0.8"
   }
 }
