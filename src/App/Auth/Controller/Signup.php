@@ -38,7 +38,7 @@ class Signup extends BasicController
                     
                     $this->loadUser();
                     
-                    $message = 'Вы успено зарегистированы';
+                    $message = 'Вы успешно зарегистированы';
                 } else {
                     $message = 'Не удалось создать пользователя.';
                 }

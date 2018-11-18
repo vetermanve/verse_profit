@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
-vendor/
-stats-data/
+.idea
 composer.lock
+/vendor/
+/data/
 /semantic/
 /node_modules/
