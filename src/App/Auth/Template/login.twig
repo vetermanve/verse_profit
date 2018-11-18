@@ -23,12 +23,13 @@
                         Войдите в систему
                     </div>
                 </h2>
-                <form class="ui large form {{ message ? 'error' : '' }}" action="/landing/login">
+                <form class="ui large form {{ message ? 'error' : '' }}" action="/auth" method="post">
+                    <input type="hidden" name="submit" value="1"/>
                     <div class="ui stacked segment">
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="user icon"></i>
-                                <input type="text" name="email" value="{{ login }}" placeholder="E-mail address">
+                                <input type="text" name="email" value="{{ email }}" placeholder="E-mail address">
                             </div>
                         </div>
                         <div class="field">
@@ -40,7 +41,7 @@
                         <input class="ui fluid large teal submit button" type="submit" value="Войти"/>
                     </div>
 
-                    <div class="ui error message"></div>
+                    <div class="ui error message">{{ message }}</div>
                 </form>
 
                 <div class="ui message">

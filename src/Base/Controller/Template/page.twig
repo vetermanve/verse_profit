@@ -23,6 +23,7 @@
                     {% endif %}
                     {% if not loop.last %} | {% endif %}
                 {% endfor %}
+                <span style="float: right;">{{ _user.name }}</span>
             </div>
         {% block content %}
         {% endblock %}

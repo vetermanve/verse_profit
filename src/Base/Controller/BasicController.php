@@ -6,15 +6,18 @@ use Base\Auth\ChannelSecurityWrapperFactory;
 use Base\Auth\SecurityWrapper\ChannelStateSecurityWrapperInterface;
 use Base\Auth\StateProvider\RunRequestWrapperStateProvider;
 use Base\Render\RendererInterface;
+use Service\User\UserService;
 use Verse\Di\Env;
 use Verse\Run\Controller\BaseControllerProto;
 
 abstract class BasicController extends BaseControllerProto
 {
-    const STATE_KEY_USER_ID  = 'user_id';
-    const STATE_KEY_SCOPE_ID = 'scope_id';
-    
-    const DEFAULT_USER_ID = 0;
+    const STATE_KEY_USER_ID           = 'user_id';
+    const STATE_KEY_SCOPE_ID          = 'scope_id';
+    const STATE_AUTHORISE_DEFAULT_TTL = 2073600; // 24 days
+
+    const DEFAULT_USER_ID = '';
+    const DEFAULT_USER = [];
 
     /**
      * @var RendererInterface
@@ -22,6 +25,8 @@ abstract class BasicController extends BaseControllerProto
     protected $_renderer;
 
     protected $_userId = self::DEFAULT_USER_ID;
+
+    protected $_user = self::DEFAULT_USER;
 
     protected $_scopeId;
 
@@ -48,7 +53,7 @@ abstract class BasicController extends BaseControllerProto
         /* @var $securityFactory ChannelSecurityWrapperFactory */
         $stateProviderWrapper = new RunRequestWrapperStateProvider($this->requestWrapper);
         $this->_secureState = $securityFactory->getWrapper($stateProviderWrapper);
-        
+
         // load user_id and state
         if ($this->requestWrapper->getState(self::STATE_KEY_USER_ID)) {
             $this->_userId = $this->_secureState->getState(self::STATE_KEY_USER_ID, self::DEFAULT_USER_ID);
@@ -57,6 +62,8 @@ abstract class BasicController extends BaseControllerProto
         if ($this->requestWrapper->getState(self::STATE_KEY_SCOPE_ID)) {
             $this->_scopeId = $this->_secureState->getState(self::STATE_KEY_SCOPE_ID);
         }
+        
+        $this->loadUser();
 
         // check user_id
         if (!method_exists($this, $this->method)) {
@@ -84,10 +91,17 @@ abstract class BasicController extends BaseControllerProto
     {
         return [
             '_userId'      => $this->_userId,
-            '_scopeId'      => $this->_scopeId,
+            '_user'        => $this->_user,
+            '_scopeId'     => $this->_scopeId,
             '_pages'       => $this->_pages(),
             '_currentPage' => $this->requestWrapper->getResource(),
         ];
+    }
+    
+    public function loadUser() {
+        if ($this->_userId) {
+            $this->_user = (new UserService())->getUser($this->_userId);
+        }
     }
 
     protected function _render($template, $data = [])

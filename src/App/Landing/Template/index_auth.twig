@@ -1,0 +1,8 @@
+{% extends _layout %}
+
+{% block content %}
+    <h1>Привет {{ _user.name }} </h1>
+    <p>
+        Если ты закончил пользование проектом, можешь <a href="/auth/logout">выйти</a>
+    </p>
+{% endblock %}

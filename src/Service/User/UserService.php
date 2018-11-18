@@ -28,4 +28,9 @@ class UserService
         $res = $this->getStorage()->write()->insert($id, $data, __METHOD__);
         return $res;
     }
+    
+    public function getUser ($userId) 
+    {
+        return $this->getStorage()->read()->get($userId, __METHOD__, []);   
+    }
 }
