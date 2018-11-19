@@ -37,9 +37,15 @@ abstract class BasicController extends BaseControllerProto
 
     protected function _pages()
     {
+        if ($this->_userId) {
+            return [
+                'Главная'     => '/',
+                'Друзья' => '/relations-users',
+            ];  
+        } 
+        
         return [
-            'Home'     => '/',
-            'Contacts' => '/landing/contacts',
+            'Главная'     => '/',
         ];
     }
 

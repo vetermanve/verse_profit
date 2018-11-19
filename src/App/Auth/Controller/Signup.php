@@ -15,7 +15,7 @@ class Signup extends BasicController
     public function index()
     {
         $isSubmit = (bool) $this->p('submit');
-        $isAuthorised = (bool)$this->_userId;
+        $isAuthorised = (bool) $this->_userId;
 
         $name = $this->p('firstname');
         $email = $this->p('email');
@@ -35,9 +35,9 @@ class Signup extends BasicController
                     $userId = $user[UserModel::ID];
                     $this->_userId = $userId;
                     $this->_secureState->setState(self::STATE_KEY_USER_ID, $this->_userId, self::STATE_AUTHORISE_DEFAULT_TTL);
-                    
+
                     $this->loadUser();
-                    
+
                     $message = 'Вы успешно зарегистированы';
                 } else {
                     $message = 'Не удалось создать пользователя.';
@@ -46,28 +46,23 @@ class Signup extends BasicController
                 $message = 'Имя пользователя или пароль не заданы!';
             }
         }
-        
-        if ($isSubmit && (bool)$this->_userId) {
+
+        if ($isSubmit && (bool) $this->_userId) {
             $authService = new AuthService();
             $res = $authService->addAuthPair(KeyTypes::EMAIL, $email, $pass, $this->_userId);
             if ($res && $message === '') {
                 $message = 'Авторизация по email успешно установлена';
-            } elseif (!$res) {
+            } else if (!$res) {
                 $message = 'Авторизация под таким email уже существует. ';
             }
         }
 
         return $this->_render(__FUNCTION__, [
-            'name' => $name,
-            'email' => $email,
+            'name'         => $name,
+            'email'        => $email,
             'message'      => $message,
             'isAuthorised' => $isAuthorised,
         ]);
-    }
-
-    private function _createUser($data)
-    {
-
     }
 
     protected function getClassDirectory()

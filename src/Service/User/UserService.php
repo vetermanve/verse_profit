@@ -33,4 +33,9 @@ class UserService
     {
         return $this->getStorage()->read()->get($userId, __METHOD__, []);   
     }
+
+    public function getUsers(array $usersIds)
+    {
+        return $this->getStorage()->read()->mGet($usersIds, __METHOD__);
+    }
 }
