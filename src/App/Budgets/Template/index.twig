@@ -1,0 +1,42 @@
+{% extends _layout %}
+
+{% block content %}
+
+    <h1>Бюджеты</h1>
+    <p>
+    {% for budget in budgets %}
+        <div class="ui big form">
+            <form action="/budgets/select">
+                <div class="field">
+                    <label>{{ budget.name }}{{ budget.description ? ' - ' ~ budget.description : '' }}</label>
+                    <input type="hidden" name="budget_id" value="{{ budget.id }}"/>
+                    <button class="ui button" type="submit">Выбрать</button>
+                </div>
+            </form>
+        </div>
+    {% endfor %}
+    </p>
+    <h2>Создай бюджет</h2>
+    {% if(message) %}
+        <p>{{ message }}</p>
+    {% endif %}
+    <div class="ui form">
+        <form action="/budgets/add" method="post">
+            <div class="field">
+                <label>Название</label>
+                <input type="text" name="name" placeholder="Название"/>
+            </div>
+            <div class="field">
+                <label>Описание</label>
+                <input type="text" name="desc" placeholder="Описание"/>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="hidden" id="check-switch" name="switch">
+                    <label for="check-switch">Сразу переключиться на этот бюджет</label>
+                </div>
+            </div>
+            <button class="ui button" type="submit">Сохранить</button>
+        </form>
+    </div>
+{% endblock %}

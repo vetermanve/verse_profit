@@ -23,7 +23,7 @@
                     {% endif %}
                     {% if not loop.last %} | {% endif %}
                 {% endfor %}
-                <span style="float: right;">{{ _user.name }}</span>
+                <span style="float: right;">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</span>
             </div>
         {% block content %}
         {% endblock %}

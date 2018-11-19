@@ -6,6 +6,7 @@ use Base\Auth\ChannelSecurityWrapperFactory;
 use Base\Auth\SecurityWrapper\ChannelStateSecurityWrapperInterface;
 use Base\Auth\StateProvider\RunRequestWrapperStateProvider;
 use Base\Render\RendererInterface;
+use Service\Balance\BalanceService;
 use Service\User\UserService;
 use Verse\Di\Env;
 use Verse\Run\Controller\BaseControllerProto;
@@ -13,11 +14,11 @@ use Verse\Run\Controller\BaseControllerProto;
 abstract class BasicController extends BaseControllerProto
 {
     const STATE_KEY_USER_ID           = 'user_id';
-    const STATE_KEY_SCOPE_ID          = 'scope_id';
+    const STATE_KEY_BUDGET_ID         = 'budget_id';
     const STATE_AUTHORISE_DEFAULT_TTL = 2073600; // 24 days
 
     const DEFAULT_USER_ID = '';
-    const DEFAULT_USER = [];
+    const DEFAULT_USER    = [];
 
     /**
      * @var RendererInterface
@@ -28,7 +29,9 @@ abstract class BasicController extends BaseControllerProto
 
     protected $_user = self::DEFAULT_USER;
 
-    protected $_scopeId;
+    protected $_budgetId;
+
+    protected $_budget;
 
     /**
      * @var ChannelStateSecurityWrapperInterface
@@ -39,13 +42,14 @@ abstract class BasicController extends BaseControllerProto
     {
         if ($this->_userId) {
             return [
-                'Главная'     => '/',
-                'Друзья' => '/relations-users',
-            ];  
-        } 
-        
+                'Главная' => '/',
+                'Друзья'  => '/relations-users',
+                'Бюджеты' => '/budgets',
+            ];
+        }
+
         return [
-            'Главная'     => '/',
+            'Главная' => '/',
         ];
     }
 
@@ -65,10 +69,10 @@ abstract class BasicController extends BaseControllerProto
             $this->_userId = $this->_secureState->getState(self::STATE_KEY_USER_ID, self::DEFAULT_USER_ID);
         }
 
-        if ($this->requestWrapper->getState(self::STATE_KEY_SCOPE_ID)) {
-            $this->_scopeId = $this->_secureState->getState(self::STATE_KEY_SCOPE_ID);
+        if ($this->requestWrapper->getState(self::STATE_KEY_BUDGET_ID)) {
+            $this->_budgetId = $this->_secureState->getState(self::STATE_KEY_BUDGET_ID);
         }
-        
+
         $this->loadUser();
 
         // check user_id
@@ -98,15 +102,20 @@ abstract class BasicController extends BaseControllerProto
         return [
             '_userId'      => $this->_userId,
             '_user'        => $this->_user,
-            '_scopeId'     => $this->_scopeId,
+            '_budgetId'    => $this->_budgetId,
+            '_budget'      => $this->_budget,
             '_pages'       => $this->_pages(),
             '_currentPage' => $this->requestWrapper->getResource(),
         ];
     }
-    
-    public function loadUser() {
+
+    public function loadUser()
+    {
         if ($this->_userId) {
             $this->_user = (new UserService())->getUser($this->_userId);
+            if ($this->_budgetId) {
+                $this->_budget = (new BalanceService())->getBudget($this->_budgetId);
+            }
         }
     }
 

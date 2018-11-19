@@ -47,11 +47,11 @@ class Auth extends BasicController
     public function logout()
     {
         $this->_secureState->setState(self::STATE_KEY_USER_ID, null, 3600);
-        $this->_secureState->setState(self::STATE_KEY_SCOPE_ID, null, 3600);
+        $this->_secureState->setState(self::STATE_KEY_BUDGET_ID, null, 3600);
 
         $this->_user = self::DEFAULT_USER;
         $this->_userId = self::DEFAULT_USER_ID;
-        $this->_scopeId = null;
+        $this->_budgetId = null;
 
         return $this->_render('login', [
             'title' => 'Ты успешно вышел из системы!',
