@@ -24,6 +24,54 @@ body, html {
     padding: 1.7em 0;
 }
 
+/** media */
+
+.hide-sm, .hide-md, .hide-lg, .hide-xl {
+    display: none;
+}
+
+@media (min-width: 35.5em) {
+    html {
+        font-size: 12px;
+    }
+
+    .hide-sm {
+        display: block;
+    }
+}
+
+@media screen and (min-width: 48em){
+    html {
+        font-size: 14px;
+    }
+
+    .hide-md {
+        display: block;
+    }
+}
+
+@media screen and (min-width: 64em){
+    html {
+        font-size: 16px;
+    }
+
+    .hide-lg {
+        display: block;
+    }
+}
+
+@media screen and (min-width: 80em) {
+    html {
+        font-size: 16px;
+    }
+
+    .hide-xl {
+        display: block;
+    }
+}
+
+/** end media */
+
 a, a:visited {
     color: blue;
     text-decoration: none;
