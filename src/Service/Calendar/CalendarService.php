@@ -6,7 +6,9 @@ namespace Service\Calendar;
 
 class CalendarService
 {
-    public function getMonthsStarts($year)
+    public const DAY_SECONDS = 86400;
+    
+    public function getMonthsStarts($year) : array
     {
         $result = [];
         foreach (range(1, 12) as $month) {
@@ -16,7 +18,7 @@ class CalendarService
         return $result;
     }
     
-    public function getDaysOfMonthDate ($monthDate) 
+    public function getDaysOfMonthDate ($monthDate) : array
     {
         $monthDay = new \DateTime();
         $monthDay->setTimestamp($monthDate);

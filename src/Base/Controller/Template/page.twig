@@ -17,7 +17,7 @@
         <div id="content-pad">
             <div class="ui secondary pointing stackable menu">
                 {% for pageName, url in _pages %}
-                    {% if (url == _currentPage ) %}
+                    {% if (url in _currentPage) %}
                         <a href="{{ url }}" class="item active">{{ pageName }}</a>
                     {% else %}
                         <a href="{{ url }}" class="item">{{ pageName }}</a>

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Service\Suggestion\Model;
+namespace Service\Plan\Model;
 
 
-class SuggestionModel
+class PlanModel
 {
     const ID           = 'id';
     const NAME         = 'name';

@@ -4,27 +4,43 @@
     <h1>Цели и средства на {{ month | date('F') }} {{ year }}</h1>
 
     <div class="ui cards">
-        {% for id, day in days %}
-        <div class="card">
-            <div class="content">
-                {#<img class="right floated mini ui image" src="/images/avatar/large/elliot.jpg">#}
-                <div class="header">
-                    {{ day | date('d M') }}
+        {% for date, day in daysPlans %}
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ date | date('d M') }}</div>
+                    <div class="meta">
+                        Баланс для {{ day.balance }}
+                    </div>
                 </div>
-                <div class="meta">
-                    Some meta
-                </div>
-                <div class="description">
-                    Some description
+                {% if day.plans is not empty %}
+                    {% set plans = day.plans %}
+                    <div class="content">
+                        <div class="ui small feed">
+                            {% for plan in plans %}
+                                <div class="event">
+                                    <div class="content">
+                                        <div class="summary">
+                                            <a href="/plans/?id={{ plan.id }}">{{ plan.name }}</a> {{ plan.amount }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="extra content">
+                    <div class="meta">
+                        Приход {{ day.increase }}, Расход {{ day.decrease }}
+                    </div>
+                    {% if false %}
+                        <div class="ui two buttons">
+                            <div class="ui basic green button">Approve</div>
+                            <div class="ui basic red button">Decline</div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-            <div class="extra content">
-                <div class="ui two buttons">
-                    <div class="ui basic green button">Approve</div>
-                    <div class="ui basic red button">Decline</div>
-                </div>
-            </div>
-        </div>
         {% endfor %}
     </div>
 {% endblock %}

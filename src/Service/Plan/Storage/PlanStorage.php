@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Service\Suggestion\Storage;
+namespace Service\Plan\Storage;
 
 
 use Base\Storage\GoalsBasicStorage;
 
-class SuggestionStorage extends GoalsBasicStorage
+class PlanStorage extends GoalsBasicStorage
 {
 
     protected function getTableName() : string
