@@ -42,10 +42,11 @@ abstract class BasicController extends BaseControllerProto
     {
         if ($this->_userId) {
             return [
-                'Главная' => '/',
-                'Планы'   => '/suggestions',
-                'Друзья'  => '/relations-users',
-                'Бюджеты' => '/budgets',
+                'Главная'   => '/',
+                'Календарь' => '/calendar',
+                'Планы'     => '/suggestions',
+                'Друзья'    => '/relations-users',
+                'Бюджеты'   => '/budgets',
             ];
         }
 

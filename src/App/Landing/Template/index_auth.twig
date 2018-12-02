@@ -1,8 +1,10 @@
 {% extends _layout %}
 
 {% block content %}
-    <h1>Привет {{ _user.name }} </h1>
-    <p>
-        Если ты закончил пользование проектом, можешь <a href="/auth/logout">выйти</a>
-    </p>
+    <h1>Выбери месяц в {{ year }}, {{ _user.name }} </h1>
+    <div>
+    {% for id, month in months %}
+        <a href="/calendar/?month={{ id }}" class="ui green basic button">{{ month | date('F') }}</a>
+    {% endfor %}
+    </div>
 {% endblock %}

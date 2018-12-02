@@ -14,16 +14,21 @@
 <body>
     <div id="content">
         <div id="content-pad">
-            <div id="menu">
+            <div class="ui secondary pointing stackable menu">
                 {% for pageName, url in _pages %}
                     {% if (url == _currentPage ) %}
-                        <a href="{{ url }}" class="nav-current">{{ pageName }}</a>
+                        <a href="{{ url }}" class="item active">{{ pageName }}</a>
                     {% else %}
-                        <a href="{{ url }}">{{ pageName }}</a>
+                        <a href="{{ url }}" class="item">{{ pageName }}</a>
                     {% endif %}
-                    {% if not loop.last %} | {% endif %}
                 {% endfor %}
-                <span style="float: right;">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</span>
+                
+                <div class="right menu">
+                    <span class="item" style="float: right;">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</span>
+                    <a class="ui item" href="/auth/logout">
+                        Выйти
+                    </a>
+                </div>
             </div>
         {% block content %}
         {% endblock %}

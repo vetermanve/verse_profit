@@ -3,6 +3,7 @@
 namespace App\Landing\Controller;
 
 use Base\Controller\BasicController;
+use Service\Calendar\CalendarService;
 
 class Landing extends BasicController
 {
@@ -16,9 +17,22 @@ class Landing extends BasicController
     }
 
     protected function index_auth() {
+        $calendar = new CalendarService();
+        
+        $currentYear = $this->p('year');
+        if ($currentYear) {
+            $this->setState('year', $currentYear);
+        } else {
+            $currentYear = $this->getState('year', (int)date('Y'));
+        }
+        
+        $months = $calendar->getMonthsStarts($currentYear);
+        
         return $this->_render(__FUNCTION__, [
             'title'      => 'Цели и средства в твоем распоряжении!',
             'authorised' => (bool) $this->_userId,
+            'year' => $currentYear,
+            'months' => $months,
         ]);
     }
 

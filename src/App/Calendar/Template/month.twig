@@ -1,0 +1,30 @@
+{% extends _layout %}
+
+{% block content %}
+    <h1>Цели и средства на {{ month | date('F') }} {{ year }}</h1>
+
+    <div class="ui cards">
+        {% for id, day in days %}
+        <div class="card">
+            <div class="content">
+                {#<img class="right floated mini ui image" src="/images/avatar/large/elliot.jpg">#}
+                <div class="header">
+                    {{ day | date('d M') }}
+                </div>
+                <div class="meta">
+                    Some meta
+                </div>
+                <div class="description">
+                    Some description
+                </div>
+            </div>
+            <div class="extra content">
+                <div class="ui two buttons">
+                    <div class="ui basic green button">Approve</div>
+                    <div class="ui basic red button">Decline</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
