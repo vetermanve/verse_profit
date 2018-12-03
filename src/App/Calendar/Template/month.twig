@@ -6,10 +6,10 @@
     <div class="ui cards">
         {% for date, day in daysPlans %}
             <div class="card">
-                <div class="content">
+                <div class="extra content">
                     <div class="header">{{ date | date('d M') }}</div>
                     <div class="meta">
-                        Баланс для {{ day.balance }}
+                        Баланс дня {{ day.balance | number_format(0, '.', ' ') }}
                     </div>
                 </div>
                 {% if day.plans is not empty %}
@@ -20,18 +20,27 @@
                                 <div class="event">
                                     <div class="content">
                                         <div class="summary">
-                                            <a href="/plans/?id={{ plan.id }}">{{ plan.name }}</a> {{ plan.amount }}
+                                            <div class="ui grid">
+                                                <div class="ten wide column ellipse">
+                                                    <a href="/plans/?id={{ plan.id }}">{{ plan.name }}</a>
+                                                </div>
+                                                <div class="six wide column right aligned" style="white-space: nowrap">
+                                                    {{ plan.amount | number_format(0, '.', ' ') }}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
+                {% else %}
+                    <div class="content"></div>
                 {% endif %}
-
                 <div class="extra content">
                     <div class="meta">
-                        Приход {{ day.increase }}, Расход {{ day.decrease }}
+                        Приход {{ day.increase | number_format(0, '.', ' ') }},
+                        Расход {{ day.decrease | number_format(0, '.', ' ') }}
                     </div>
                     {% if false %}
                         <div class="ui two buttons">

@@ -86,6 +86,12 @@ pre {
     text-align: left;
 }
 
+.ellipse {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 table, tr {
     margin: 0;
     padding: 0;

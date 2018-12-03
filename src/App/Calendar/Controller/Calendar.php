@@ -57,26 +57,26 @@ class Calendar extends BasicController
         $calendar = new CalendarService();
 
         $days = $calendar->getDaysOfMonthDate($this->month);
-        
+
         $plans = new PlansService();
         $minDay = min($days);
         $maxDay = max($days) + CalendarService::DAY_SECONDS;
-        
+
         $plans = $plans->getPlans($this->_budgetId, $minDay, $maxDay);
-        
+
         $daysPlans = [];
         foreach ($days as $day) {
             $daysPlans[$day]['plans'] = [];
         }
-        
+
         $message = '';
         foreach ($plans as $plan) {
             $dayTime = new \DateTime();
             $dayTime->setTimestamp($plan[PlanModel::DATE]);
-            $dayTime->setTime(0,0,0);
+            $dayTime->setTime(0, 0, 0);
             $day = $dayTime->getTimestamp();
             if (!isset($daysPlans[$day])) {
-                $message .= ', Suggestion '.date('c'). 'not found a day';
+                $message .= ', Suggestion ' . date('c') . 'not found a day';
                 continue;
             }
 
@@ -84,9 +84,9 @@ class Calendar extends BasicController
         }
 
         foreach ($daysPlans as &$plansData) {
-            $increase= 0;
+            $increase = 0;
             $decrease = 0;
-            
+
             foreach ($plansData['plans'] as $plan) {
                 if ($plan[PlanModel::AMOUNT] > 0) {
                     $increase += $plan[PlanModel::AMOUNT];
@@ -94,20 +94,21 @@ class Calendar extends BasicController
                     $decrease += $plan[PlanModel::AMOUNT];
                 }
             }
-            
+
             $plansData['increase'] = $increase;
             $plansData['decrease'] = $decrease;
             $plansData['balance'] = $increase + $decrease;
-        } unset ($plansData);
-        
+        }
+        unset ($plansData);
+
         $message && var_dump($message);
-        
+
         return $this->_render('month', [
-            'month' => $this->month,
-            'year'  => $this->yearNumber,
-            'days'  => $days,
+            'month'     => $this->month,
+            'year'      => $this->yearNumber,
+            'days'      => $days,
             'daysPlans' => $daysPlans,
-            'message' => $message,
+            'message'   => $message,
         ]);
     }
 
