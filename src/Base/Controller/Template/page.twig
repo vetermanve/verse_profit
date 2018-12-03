@@ -26,9 +26,15 @@
                 
                 <div class="right menu">
                     <span class="item" style="float: right;">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</span>
+                    {% if _userId %}
                     <a class="ui item" href="/auth/logout">
                         Выйти
                     </a>
+                    {% else %}
+                    <a class="ui item" href="/auth/">
+                        Войти
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         {% block content %}
