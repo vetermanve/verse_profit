@@ -9,23 +9,8 @@
         </div>
         <p></p>
     {% endif %}
-    <div class="ui cards">
-        {% for suggestion in suggestions %}
-        <div class="card">
-            <div class="content">
-                <div class="header">{{ suggestion.name }}</div>
-                <div class="meta">{{ suggestion.date | date('d M') }}</div>
-                <div class="description">
-                    {{ suggestion.amount }}
-                </div>
-            </div>
-            <div class="extra content">
-                <a href="/plans/delete?id={{ suggestion.id }}" class="ui small button">удалить</a>
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-    <h2>Внеси план</h2>
+
+ <h2>Внеси план</h2>
     <div class="ui form">
         <form action="/plans/add" method="post">
             <div class="field">
@@ -42,5 +27,22 @@
             </div>
             <button class="ui button" type="submit">Добавить план</button>
         </form>
+    </div>
+
+    <div class="ui cards">
+        {% for suggestion in suggestions %}
+        <div class="card">
+            <div class="content">
+                <div class="header">{{ suggestion.name }}</div>
+                <div class="meta">{{ suggestion.date | date('d M') }}</div>
+                <div class="description">
+                    {{ suggestion.amount }}
+                </div>
+            </div>
+            <div class="extra content">
+                <a href="/plans/delete?id={{ suggestion.id }}" class="ui small button">удалить</a>
+            </div>
+        </div>
+    {% endfor %}
     </div>
 {% endblock %}
