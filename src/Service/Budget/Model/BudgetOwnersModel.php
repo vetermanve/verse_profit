@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Service\Balance\Model;
+namespace Service\Budget\Model;
 
 
 class BudgetOwnersModel

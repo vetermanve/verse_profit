@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Service\Balance\Storage;
+namespace Service\Budget\Storage;
 
 
 use Base\Storage\GoalsBasicStorage;

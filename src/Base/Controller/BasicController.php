@@ -6,7 +6,7 @@ use Base\Auth\ChannelSecurityWrapperFactory;
 use Base\Auth\SecurityWrapper\ChannelStateSecurityWrapperInterface;
 use Base\Auth\StateProvider\RunRequestWrapperStateProvider;
 use Base\Render\RendererInterface;
-use Service\Balance\BalanceService;
+use Service\Budget\BudgetService;
 use Service\User\UserService;
 use Verse\Di\Env;
 use Verse\Run\Controller\BaseControllerProto;
@@ -45,6 +45,7 @@ abstract class BasicController extends BaseControllerProto
                 'Главная'   => '/landing',
                 'Календарь' => '/calendar',
                 'Планы'     => '/plans',
+                'Счета'     => '/balances',
                 'Друзья'    => '/relations-users',
                 'Бюджеты'   => '/budgets',
             ];
@@ -116,7 +117,7 @@ abstract class BasicController extends BaseControllerProto
         if ($this->_userId) {
             $this->_user = (new UserService())->getUser($this->_userId);
             if ($this->_budgetId) {
-                $this->_budget = (new BalanceService())->getBudget($this->_budgetId);
+                $this->_budget = (new BudgetService())->getBudget($this->_budgetId);
             }
         }
     }

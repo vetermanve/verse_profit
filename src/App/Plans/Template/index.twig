@@ -2,33 +2,32 @@
 
 {% block content %}
 
-    <h1>Планы </h1>
+    <h1>Запланировать</h1>
     {% if(message) %}
         <div class="ui success message">
             {{ message }}
         </div>
         <p></p>
     {% endif %}
-
- <h2>Внеси план</h2>
     <div class="ui form">
         <form action="/plans/add" method="post">
             <div class="field">
-                <label>На что?</label>
-                <input type="text" name="name" placeholder="На что?"/>
+                <label>Что?</label>
+                <input type="text" name="name" placeholder="Что планируем?"/>
             </div>
             <div class="field">
                 <label>Когда?</label>
-                <input type="text" name="date" placeholder="Когда?" value="{{ date | date('d.m.Y') }}"/>
+                <input type="date" name="date" placeholder="Когда?" value="{{ date | date('d.m.Y') }}"/>
             </div>
             <div class="field">
-                <label>Сколько</label>
+                <label>Сколько?</label>
                 <input type="number" name="amount" placeholder="Сколько денег"/>
             </div>
             <button class="ui button" type="submit">Добавить план</button>
         </form>
     </div>
 
+    <h1>Планы </h1>
     <div class="ui cards">
         {% for suggestion in suggestions %}
         <div class="card">

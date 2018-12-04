@@ -5,8 +5,8 @@ namespace App\Budgets\Controller;
 
 
 use Base\Controller\BasicController;
-use Service\Balance\BalanceService;
-use Service\Balance\Model\BudgetModel;
+use Service\Budget\BudgetService;
+use Service\Budget\Model\BudgetModel;
 
 class Budgets extends BasicController
 {
@@ -14,8 +14,8 @@ class Budgets extends BasicController
     
     public function index () 
     {
-        $balanceService = new BalanceService();
-        $budgets = $balanceService->getBudgetsByUserId($this->_userId);
+        $budgetService = new BudgetService();
+        $budgets = $budgetService->getBudgetsByUserId($this->_userId);
         
         return $this->_render(__FUNCTION__, [
             'budgets' => $budgets,
@@ -29,8 +29,8 @@ class Budgets extends BasicController
         $desc = $this->p('desc');
         $isSwitchNow = $this->p('switch');
         
-        $balanceService = new BalanceService();
-        $budget = $balanceService->createBudget($this->_userId, $name, $desc);
+        $budgetService = new BudgetService();
+        $budget = $budgetService->createBudget($this->_userId, $name, $desc);
         
         if ($budget) {
             $this->message = 'Бюджет создан!';    

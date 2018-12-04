@@ -11,9 +11,16 @@
             integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
             crossorigin="anonymous"></script>
     <script src="/semantic/semantic.min.js"></script>
+    <script>
+      $(document)
+        .ready(function() {
+          $('.ui.dropdown').dropdown();
+        })
+      ;
+    </script>
 </head>
 <body>
-    <div id="content">
+    <div id="content" class="ui container">
         <div id="content-pad">
             <div class="ui secondary pointing stackable menu">
                 {% for pageName, url in _pages %}
