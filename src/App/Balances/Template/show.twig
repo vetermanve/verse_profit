@@ -28,7 +28,7 @@
             </div>
             <div class="field">
                 <label for="type">Со счета</label>
-                <select name="balance_from_id" id="type" class="ui dropdown">
+                <select name="balance_from_id" id="type" class="ui dropdown search">
                     <option value="">Из космоса</option>
                     {% for globalBalance  in allBalances %}
                         <option value="{{ globalBalance.id }}">{{ globalBalance.name }}</option>
