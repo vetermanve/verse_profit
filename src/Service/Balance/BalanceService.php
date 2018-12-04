@@ -31,7 +31,7 @@ class BalanceService
         return new MovementStorage();
     }
 
-    public function createBalance($budgetId, $name)
+    public function createBalance($budgetId, $name, $type = BalanceType::CURRENT)
     {
         $id = Uuid::v4();
 
@@ -40,7 +40,7 @@ class BalanceService
             BalanceModel::NAME      => $name,
             BalanceModel::BUDGET_ID => $budgetId,
             BalanceModel::AMOUNT    => 0,
-            BalanceModel::TYPE      => BalanceType::CURRENT,
+            BalanceModel::TYPE      => $type,
         ];
 
         return $this->getBalanceStorage()->write()->insert($id, $bind, __METHOD__);
@@ -91,7 +91,7 @@ class BalanceService
                 MovementModel::ID             => $movementOutId,
                 MovementModel::BALANCE_ID     => $balanceFromId,
                 MovementModel::TRANSACTION_ID => $transactionId,
-                MovementModel::AMOUNT         => $amount,
+                MovementModel::AMOUNT         => -$amount,
             ];
 
             $out = $movementStorage->write()->insert($movementOutId, $movementOutBind, __METHOD__);
@@ -125,13 +125,25 @@ class BalanceService
             $transactionStorage->write()->update($transactionId, [
                 TransactionModel::STATUS => TransactionStatus::CREATED
             ], __METHOD__);
+            
+            return false;
         }
 
         $transactionStorage->write()->update($transactionId, [
             TransactionModel::STATUS => TransactionStatus::MONEY_IN
         ], __METHOD__);
         
+        $this->updateBalance($balanceToId);
         
+        if (isset($movementOutId)) {
+            $this->updateBalance($balanceFromId);
+        }
+
+        $transactionStorage->write()->update($transactionId, [
+            TransactionModel::STATUS => TransactionStatus::FINISHED
+        ], __METHOD__);
+        
+        return $transaction;
     }
     
     public function updateBalance ($balanceId) 
@@ -144,9 +156,7 @@ class BalanceService
         // $lastMovementDate = $balance[BalanceModel::LAST_MOVEMENT_DATE];
         // $lastMovementId = $balance[BalanceModel::LAST_MOVEMENT_ID];
         $movements = $this->getMovementStorage()->search()->find([
-            [
-                [MovementModel::BALANCE_ID, Compare::EQ, $balanceId]
-            ]
+            [MovementModel::BALANCE_ID, Compare::EQ, $balanceId]
         ], 10000, __METHOD__);
         
         if (!\is_array($movements)) {
@@ -161,6 +171,11 @@ class BalanceService
         return $this->getBalanceStorage()->write()->update($balanceId, [
              BalanceModel::AMOUNT => $amount
         ], __METHOD__);
+    }
+    
+    public function getBalance ($balanceId) 
+    {
+        return $this->getBalanceStorage()->read()->get($balanceId, __METHOD__);
     }
 
     public function getBalanceTransactions($balanceId, $limit = 10000, $offset = 0)

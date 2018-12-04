@@ -9,7 +9,6 @@ use Service\Plan\PlansService;
 
 class Plans extends BasicController
 {
-    private $message = '';
     private $addDate = '';
 
     public function index()

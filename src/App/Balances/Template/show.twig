@@ -1,0 +1,60 @@
+{% extends _layout %}
+
+{% block content %}
+
+    <h1>Cчет {{ balance.name }}</h1>
+    {% if(message) %}
+        <div class="ui success message">
+            {{ message }}
+        </div>
+        <p></p>
+    {% endif %}
+
+    <h2>Добавить внесение</h2>
+    <div class="ui form">
+        <form action="/balances/addTransaction" method="post">
+            <input type="hidden" name="balance_to_id" value="{{ balance.id }}"/>
+            <div class="field">
+                <label>Откуда?</label>
+                <input type="text" name="description" placeholder="Описание" value="{{ bind.description }}"/>
+            </div>
+            <div class="field">
+                <label>Сколько?</label>
+                <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
+            </div>
+            <div class="field">
+                <label>Когда?</label>
+                <input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>
+            </div>
+            <div class="field">
+                <label for="type">Со счета</label>
+                <select name="balance_from_id" id="type" class="ui dropdown">
+                    <option value="">Из космоса</option>
+                    {% for globalBalance  in allBalances %}
+                        <option value="{{ globalBalance.id }}">{{ globalBalance.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="ui button" type="submit">Добавить</button>
+        </form>
+    </div>
+
+    <h2>Транзакции</h2>
+    <div class="ui cards">
+        {% for transaction in transactions %}
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ transaction.description }}</div>
+                    {#<div class="meta">{{ balanceTypes[balance.type] }}</div>#}
+                    <div class="description">
+                        <b>{{ transaction.amount | number_format(2, '.', ' ') }}</b>
+                    </div>
+                </div>
+                {#<div class="extra content">#}
+                    {#<a href="/balances/deleteTransaction?id={{ balance.id }}" class="ui small button">Удалить</a>#}
+                {#</div>#}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

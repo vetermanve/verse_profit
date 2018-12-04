@@ -37,6 +37,8 @@ abstract class BasicController extends BaseControllerProto
      * @var ChannelStateSecurityWrapperInterface
      */
     protected $_secureState;
+    
+    protected $message = ''; 
 
     protected function _pages()
     {

@@ -10,8 +10,6 @@ use Service\Budget\Model\BudgetModel;
 
 class Budgets extends BasicController
 {
-    private $message = '';
-    
     public function index () 
     {
         $budgetService = new BudgetService();
