@@ -6,6 +6,7 @@ namespace App\Balances\Controller;
 
 use Base\Controller\BasicController;
 use Service\Balance\BalanceService;
+use Service\Balance\Model\BalanceModel;
 use Service\Balance\Model\BalanceType;
 use Service\Balance\Model\TransactionModel;
 
@@ -17,8 +18,18 @@ class Balances extends BasicController
 
         $balances = $balanceService->getBudgetBalances($this->_budgetId);
 
+        $balancesByTypes = array_combine(
+            array_keys(BalanceType::getValues()),
+            array_fill(0, count(BalanceType::getValues()), [])
+        );
+
+        foreach ($balances as $balance) {
+            $balancesByTypes[$balance[BalanceModel::TYPE]][] = $balance;
+        }
+
         return $this->_render(__FUNCTION__, [
-            'balances'     => $balances,
+            // 'balances'     => $balances,
+            'balancesByTypes' => $balancesByTypes,
             'balanceTypes' => BalanceType::getValues(),
             'message'      => $this->message,
         ]);
