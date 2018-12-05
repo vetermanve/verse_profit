@@ -7,6 +7,7 @@ namespace App\Balances\Controller;
 use Base\Controller\BasicController;
 use Service\Balance\BalanceService;
 use Service\Balance\Model\BalanceType;
+use Service\Balance\Model\TransactionModel;
 
 class Balances extends BasicController
 {
@@ -61,6 +62,9 @@ class Balances extends BasicController
         $balanceId = $this->p('id', $this->p('balance_to_id'));
         $balanceService = new BalanceService();
         $transactions = $balanceService->getBalanceTransactions($balanceId);
+        uasort($transactions, function ($tr1, $tr2) {
+            return $tr1[TransactionModel::CREATED_DATE] <= $tr2[TransactionModel::CREATED_DATE] ? 1 : -1;
+        });
 
         $balance = $balanceService->getBalance($balanceId);
         $allBalances = $balanceService->getBudgetBalances($this->_budgetId);
@@ -70,6 +74,7 @@ class Balances extends BasicController
             'balance'      => $balance,
             'allBalances'  => $allBalances,
             'transactions' => $transactions,
+            'balanceTypes' => BalanceType::getValues(),
             'bind' => [
                 'date' => date('d.m.Y'),
             ],
@@ -80,7 +85,7 @@ class Balances extends BasicController
     {
         $balanceId = $this->p('balance_to_id');
         $balanceFromId = $this->p('balance_from_id');
-        $amount = $this->p('amount');
+        $amount = (float)$this->p('amount');
         $description = $this->p('description');
 
         if ($amount) {

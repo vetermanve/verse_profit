@@ -1,9 +1,5 @@
 version: '2'
 
-networks:
-  wellmaxnetwork:
-    external: true
-
 services:
 
   web:
@@ -12,7 +8,7 @@ services:
     volumes:
     - ./:/var/www
     ports:
-    - "8080:80"
+    - "9080:80"
 
   app:
     build:
@@ -31,19 +27,19 @@ services:
     - "POSTGRES_DB=example"
     - "PHP_IDE_CONFIG=serverName=localhost"
     user: www-data
-    extra_hosts:
-    - "dockerhost:10.0.75.1"
+#    extra_hosts:
+#    - "dockerhost:10.0.75.1"
 
-  database:
-    image: postgres:10-alpine
-    environment:
-    - "POSTGRES_DB=example"
-    - "POSTGRES_USER=postgres"
-    - "POSTGRES_PASSWORD=postgres"
-    ports:
-    - "5432:5432"
-
-  redis:
-    image: redis:4.0.2
-    ports:
-    - "6379:6379"
+#  database:
+#    image: postgres:10-alpine
+#    environment:
+#    - "POSTGRES_DB=example"
+#    - "POSTGRES_USER=postgres"
+#    - "POSTGRES_PASSWORD=postgres"
+#    ports:
+#    - "5432:5432"
+#
+#  redis:
+#    image: redis:4.0.2
+#    ports:
+#    - "6379:6379"

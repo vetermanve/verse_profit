@@ -34,6 +34,10 @@ class UserService
         return $this->getStorage()->read()->get($userId, __METHOD__, []);   
     }
 
+    public function updateUser ($userId, $bind) {
+        return $this->getStorage()->write()->update($userId, $bind, __METHOD__);
+    }
+
     public function getUsers(array $usersIds)
     {
         return $this->getStorage()->read()->mGet($usersIds, __METHOD__);
