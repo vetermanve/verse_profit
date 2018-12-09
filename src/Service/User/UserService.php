@@ -3,6 +3,7 @@
 namespace Service\User;
 
 
+use Service\User\Model\UserModel;
 use Service\User\Model\UserNicknameModel;
 use Service\User\Storage\UserNicknameStorage;
 use Service\User\Storage\UserStorage;
@@ -48,12 +49,26 @@ class UserService
     }
 
     public function updateUser ($userId, $bind) {
-        return $this->getStorage()->write()->update($userId, $bind, __METHOD__);
+        return $this->getUserProfileStorage()->write()->update($userId, $bind, __METHOD__);
     }
 
     public function getUsers(array $usersIds)
     {
         return $this->getUserProfileStorage()->read()->mGet($usersIds, __METHOD__);
+    }
+
+    public function getUsersWithNicknames(array $usersIds)
+    {
+        $users = $this->getUserProfileStorage()->read()->mGet($usersIds, __METHOD__);
+        $nicknameIds = array_column($users, UserModel::NICKNAME_ID);
+        $nicknames = $this->getUserNicknameStorage()->read()->mGet($nicknameIds, __METHOD__);
+        foreach ($users as &$user) {
+            if (isset($user[UserModel::NICKNAME_ID], $nicknames[$user[UserModel::NICKNAME_ID]])) {
+                $user[UserModel::VIRTUAL_NICKNAME] = $nicknames[$user[UserModel::NICKNAME_ID]]; 
+            }       
+        } unset($user);
+        
+        return $users;
     }
     
     public function createUserNickname ($userId, $nickname) 
@@ -73,6 +88,17 @@ class UserService
         return $this->getUserNicknameStorage()->search()->find([
             [UserNicknameModel::USER_ID, Compare::EQ, $userId] 
         ], 100, __METHOD__);
+    }
+    
+    public function getNicknameById ($nicknameId) 
+    {
+        return $this->getUserNicknameStorage()->read()->get($nicknameId, __METHOD__);
+    }
+    
+    public function getNicknameByNickname ($nickname) 
+    {
+        $nicknameId = $this->_getNicknameId($nickname);
+        return $this->getUserNicknameStorage()->read()->get($nicknameId, __METHOD__);
     }
     
     public function getUserByNickname ($nickname) 

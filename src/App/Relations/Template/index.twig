@@ -2,13 +2,43 @@
 
 {% block content %}
     <h1>Друзья</h1>
-    <p>
+    <div class="ui form">
+        <form action="/relations-users/" method="get">
+            <div class="fields">
+                <div class="field">
+                    <label>Найти пользователя</label>
+                    <input type="text" name="nickname" placeholder="Никнейм пользователя"/>
+                </div>
+                <div class="field">
+                    <label>&nbsp;</label>
+                    <button class="ui button" type="submit">Найти</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="ui cards">
         {% for user in users %}
-        <div>
-            {{ user.name }}{{ user.email ? (', ' ~ user.email) : ''}}
-        </div>
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ user.name }}</div>
+                    <div class="meta">{{ user.nickname ? '@' ~ user.nickname.nickname : '' }}</div>
+                    <div class="description">
+                        {{ suggestion.amount }}
+                    </div>
+                </div>
+                <div class="extra content">
+                    {% if relations[user.id] %}
+                        <a href="/relations-users/removeFriend?id={{ user.id }}" class="ui button">Убрать из друзей</a>
+                    {% else %}
+                        <a href="/relations-users/addFriend?id={{ user.id }}" class="ui primary button">Добавить в друзья</a>
+                    {% endif %}
+                </div>
+            </div>
         {% endfor %}
-    </p>
+    </div>
+    
+    {% if false %}
     <h2>Заведи друзей</h2>
     {% if(message) %}
         <p>{{ message }}</p>
@@ -31,4 +61,5 @@
             </div>
         </form>
     </div>
+    {% endif %}
 {% endblock %}

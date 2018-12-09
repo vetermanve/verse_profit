@@ -25,4 +25,17 @@
             <button class="ui button" type="submit">Обновить данные</button>
         </form>
     </div>
+    
+    <h2>Редактировать никнейм</h2>
+    <div class="ui form">
+        <div class="ui info message">Никнейм нужен для того, чтобы вас смогли найти другие пользователи</div>
+        <form action="/profile/setNickname" method="post">
+            <input type="hidden" name="id" value="{{ user.id }}"/>
+            <div class="field">
+                <label>Никнейм</label>
+                <input type="text" name="nickname" placeholder="Придумайте себе никнейм" value="{{ nickname.nickname }}"/>
+            </div>
+            <button class="ui button" type="submit">Добавить никнейм</button>
+        </form>
+    </div>
 {% endblock %}

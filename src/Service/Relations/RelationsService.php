@@ -35,4 +35,21 @@ class RelationsService
         
         return $this->getStorage()->write()->insert(Uuid::v4(), $bind, __METHOD__);
     }
+    
+    public function removeRelation ($ownerUserId, $userId) 
+    {
+        $filter = [
+            [RelationModel::OWNER_USER_ID, Compare::EQ, $ownerUserId],
+            [RelationModel::RELATED_USER_ID, Compare::EQ, $userId],
+        ];
+        
+        $result = $this->getStorage()->search()->find($filter, 1000, __METHOD__);
+        $ids = array_column($result, RelationModel::ID);
+        $writeInterface = $this->getStorage()->write();
+        foreach ($ids as $id) {
+            $writeInterface->remove($id, __METHOD__);
+        }
+        
+        return true;
+    }
 }

@@ -8,6 +8,7 @@ use Base\Controller\BasicController;
 use Service\Relations\Model\RelationModel;
 use Service\Relations\RelationsService;
 use Service\User\Model\UserModel;
+use Service\User\Model\UserNicknameModel;
 use Service\User\UserService;
 
 class Users extends BasicController
@@ -16,21 +17,39 @@ class Users extends BasicController
     
     public function index () 
     {
-        $relationsService = new RelationsService();
+        $nicknameSearchString = \trim($this->p('nickname'));
         
-        $users = [];
+        $relationsService = new RelationsService();
+        $userService = new UserService();
+        
+        $users = 
+        $usersIds =
+        $relationsData =
+            [];
+        
         if ($this->_userId) {
             $relations = $relationsService->getRelations($this->_userId);
             if ($relations) {
-                $usersIds = array_column($relations, RelationModel::RELATED_USER_ID);
-                $userService = new UserService();
-                $users = $userService->getUsers($usersIds);
+                $relationsData = array_column($relations, null, RelationModel::RELATED_USER_ID);
+                $usersIds = array_keys($relationsData);
+            }
+
+            if ($nicknameSearchString) {
+                $nicknameModel = $userService->getNicknameByNickname($nicknameSearchString);
+                if ($nicknameModel) {
+                    \array_unshift($usersIds, $nicknameModel[UserNicknameModel::USER_ID]);
+                }
+            }
+
+            if ($usersIds) {
+                $users = $userService->getUsersWithNicknames($usersIds);
             }
         }
-        
+
         return $this->_render(__FUNCTION__, [
             'message' => $this->message,
             'users' => $users,
+            'relations' => $relationsData,
         ]);
     }
     
@@ -59,7 +78,39 @@ class Users extends BasicController
         }
         
         return $this->index();
-    }   
+    }
+    
+    public function addFriend () 
+    {
+        $userId = $this->p('id');
+        if ($userId) {
+            $relationsService = new RelationsService();
+            $relationsService->createRelation(
+                $this->_userId,
+                $userId
+            );
+
+            $this->message = 'Успешно добавлен!';
+        }
+        
+        return $this->index();
+    }
+
+    public function removeFriend ()
+    {
+        $userId = $this->p('id');
+        if ($userId) {
+            $relationsService = new RelationsService();
+            $relationsService->removeRelation(
+                $this->_userId,
+                $userId
+            );
+
+            $this->message = 'Успешно убран!';
+        }
+
+        return $this->index();
+    }
 
     protected function getClassDirectory()
     {
