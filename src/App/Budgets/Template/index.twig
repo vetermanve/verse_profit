@@ -3,20 +3,42 @@
 {% block content %}
 
     <h1>Бюджеты</h1>
-    <p>
-    {% for budget in budgets %}
-        <div class="ui big form">
-            <form action="/budgets/select">
-                <div class="field">
-                    <label>{{ budget.name }}{{ budget.description ? ' - ' ~ budget.description : '' }}</label>
-                    <input type="hidden" name="budget_id" value="{{ budget.id }}"/>
-                    <button class="ui button" type="submit">Выбрать</button>
+    <div class="ui cards">
+        {% for budget in budgets %}
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ budget.name }}</div>
+                    {% if budget.created_at %}
+                        <div class="meta">Создан {{ budget.created_at | date ('d.m.Y') }}</div>
+                    {% endif %}
+                    <div class="description">
+                        {{ budget.description ? budget.description : '' }}
+                    </div>
                 </div>
-            </form>
-        </div>
-    {% endfor %}
-    </p>
-    <h2>Создай бюджет</h2>
+                <div class="extra content">
+                    <div class="ui form">
+                        <div class="inline fields">
+                            <div class="field">
+                                <form action="/budgets/select" class="inline">
+                                    <input type="hidden" name="budget_id" value="{{ budget.id }}"/>
+                                    <button class="ui small button primary" type="submit">Выбрать</button>
+                                </form>
+                            </div>
+                            {% if false %}
+                            <div class="field">
+                                <form action="/budgets/archive" class="inline">
+                                    <input type="hidden" name="budget_id" value="{{ budget.id }}"/>
+                                    <button class="ui small button" type="submit">Архивировать</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <h2>Создать новый бюджет</h2>
     {% if(message) %}
         <p>{{ message }}</p>
     {% endif %}

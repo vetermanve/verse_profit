@@ -38,7 +38,8 @@ class BudgetService
         $budgetId = Uuid::v4();
         $budget = [
             BudgetModel::NAME => $name,
-            BudgetModel::DESCRIPTION => $description
+            BudgetModel::DESCRIPTION => $description,
+            BudgetModel::CREATED_AT => \time(),
         ];
 
         $budget = $budgetStorage->write()->insert($budgetId , $budget, __METHOD__);

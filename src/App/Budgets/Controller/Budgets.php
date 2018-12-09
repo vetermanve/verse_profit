@@ -26,10 +26,14 @@ class Budgets extends BasicController
         $name = $this->p('name');
         $desc = $this->p('desc');
         $isSwitchNow = $this->p('switch');
+
+        $budget = null;
         
-        $budgetService = new BudgetService();
-        $budget = $budgetService->createBudget($this->_userId, $name, $desc);
-        
+        if ($name) {
+            $budgetService = new BudgetService();
+            $budget = $budgetService->createBudget($this->_userId, $name, $desc);
+        }
+                
         if ($budget) {
             $this->message = 'Бюджет создан!';    
         } else {
