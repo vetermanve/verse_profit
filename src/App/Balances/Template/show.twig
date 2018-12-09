@@ -1,8 +1,9 @@
 {% extends _layout %}
 
 {% block content %}
-
-    <h1>Cчет {{ balance.name }}</h1>
+    <p><a href="/balances">&larr; Все счета</a></p>
+    <h1><a href="/balances/show?id={{ balance.id }}">{{ balance.name }}</a></h1>
+    <p>Баланс: <b>{{ balance.amount }}</b><br>Тип счета: {{ balanceTypes[balance.type] }}</p>
     {% if(message) %}
         <div class="ui success message">
             {{ message }}
@@ -22,10 +23,10 @@
                 <label>Сколько?</label>
                 <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
             </div>
-            <div class="field">
-                <label>Когда?</label>
-                <input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>
-            </div>
+            {#<div class="field">#}
+                {#<label>Когда?</label>#}
+                {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
+            {#</div>#}
             <div class="field">
                 <label for="type">Со счета</label>
                 <select name="balance_from_id" id="type" class="ui dropdown search">
@@ -43,16 +44,16 @@
     <div class="ui cards">
         {% for transaction in transactions %}
             <div class="card">
-                <div class="content">
+                <div class="extra content">
                     <div class="header">{{ transaction.description }}</div>
-                    {#<div class="meta">{{ balanceTypes[balance.type] }}</div>#}
+                    <div class="meta">{{ allBalances[transaction.balance_from].name }} &rarr; {{ allBalances[transaction.balance_to].name }}</div>
                     <div class="description">
                         <b>{{ transaction.amount | number_format(2, '.', ' ') }}</b>
                     </div>
                 </div>
-                {#<div class="extra content">#}
-                    {#<a href="/balances/deleteTransaction?id={{ balance.id }}" class="ui small button">Удалить</a>#}
-                {#</div>#}
+                <div class="extra content">
+                    <div class="description">{{ transaction.created_date | date('d.m.Y H:i') }}</div>
+                </div>
             </div>
         {% endfor %}
     </div>

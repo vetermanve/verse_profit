@@ -48,9 +48,11 @@ class BalanceService
 
     public function getBudgetBalances($budgetId)
     {
-        return $this->getBalanceStorage()->search()->find([
+        $balances = $this->getBalanceStorage()->search()->find([
             [BalanceModel::BUDGET_ID, Compare::EQ, $budgetId],
         ], 1000, __METHOD__) ? : [];
+
+        return $balances ? array_column($balances, null, BalanceModel::ID) : [];
     }
 
     public function removeBalance($balanceId)

@@ -10,25 +10,29 @@
         <p></p>
     {% endif %}
 
-    <div class="ui cards">
-        {% for balance in balances %}
-            <div class="card">
-                <div class="content">
-                    <div class="header"><a href="/balances/show?id={{ balance.id }}" >{{ balance.name }}</a></div>
-                    <div class="meta">{{ balanceTypes[balance.type] }}</div>
-                    <div class="description">
-                        В наличии <b>{{ balance.amount | number_format(2, '.', ' ') }}</b>
+
+    {% for type, balances in balancesByTypes %}
+        {% if(balances) %}
+            <h2>{{ balanceTypes[type] }}</h2>
+            <div class="ui cards">
+            {% for balance in balances %}
+                <div class="card">
+                    <div class="content">
+                        <div class="header"><a href="/balances/show?id={{ balance.id }}" >{{ balance.name }}</a></div>
+                        <div class="meta">{{ balanceTypes[balance.type] }}</div>
+                        <div class="description">
+                            В наличии <b>{{ balance.amount | number_format(2, '.', ' ') }}</b>
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        <a href="/balances/delete?id={{ balance.id }}" class="ui small button">Удалить счет</a>
                     </div>
                 </div>
-                {#<div class="extra content">#}
-                    {#<a href="/balances-transactions?id={{ balance.id }}" class="ui button">Добавить транзакцию</a>#}
-                {#</div>#}
-                <div class="extra content">
-                    <a href="/balances/delete?id={{ balance.id }}" class="ui small button">Удалить счет</a>
-                </div>
+            {% endfor %}
             </div>
-        {% endfor %}
-    </div>
+        {% endif %}
+    {% endfor %}
+
 
     <h2>Создать счет</h2>
     <div class="ui form">

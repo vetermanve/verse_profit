@@ -32,7 +32,7 @@
                 {% endfor %}
                 
                 <div class="right menu">
-                    <span class="item" style="float: right;">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</span>
+                    <a  class="item" href="/profile">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</a>
                     {% if _userId %}
                     <a class="ui item" href="/auth/logout">
                         Выйти

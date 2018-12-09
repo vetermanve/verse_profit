@@ -1,0 +1,28 @@
+{% extends _layout %}
+
+{% block content %}
+    <h1>Привет, {{ user.name }}!</h1>
+    {% if(message) %}
+        <div class="ui success message">
+            {{ message }}
+        </div>
+        <p></p>
+    {% endif %}
+
+    <h2>Редактировать данные</h2>
+    <div class="ui form">
+        <div class="ui info message">При смене email в профиле email для входа остается прежним.</div>
+        <form action="/profile/edit" method="post">
+            <input type="hidden" name="id" value="{{ user.id }}"/>
+            <div class="field">
+                <label>Имя</label>
+                <input type="text" name="name" placeholder="Ваше имя" value="{{ user.name }}"/>
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Email" value="{{ user.email }}"/>
+            </div>
+            <button class="ui button" type="submit">Обновить данные</button>
+        </form>
+    </div>
+{% endblock %}
