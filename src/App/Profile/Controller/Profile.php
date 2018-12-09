@@ -61,7 +61,7 @@ class Profile extends BasicController
             $this->message = 'Ты пытаетешься обновить данные после авторизации под другим пользователем';
         } else {
             $nicknameString = $this->p('nickname');
-            $nicknameString = \strtolower(\mbereg_replace('[^A-Za-z0-9\.\-\_]', '', $nicknameString));
+            $nicknameString = \strtolower(\mb_ereg_replace('[^A-Za-z0-9\.\-\_]', '', $nicknameString));
 
             $userService = new UserService();
             $nicknameModel = $userService->getNicknameByNickname($nicknameString);
