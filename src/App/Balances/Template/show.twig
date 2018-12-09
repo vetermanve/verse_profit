@@ -16,7 +16,7 @@
         <form action="/balances/addTransaction" method="post">
             <input type="hidden" name="balance_to_id" value="{{ balance.id }}"/>
             <div class="field">
-                <label>Откуда?</label>
+                <label>В связи с чем?</label>
                 <input type="text" name="description" placeholder="Описание" value="{{ bind.description }}"/>
             </div>
             <div class="field">
@@ -32,7 +32,9 @@
                 <select name="balance_from_id" id="type" class="ui dropdown search">
                     <option value="">Из космоса</option>
                     {% for globalBalance  in allBalances %}
+                        {% if(globalBalance.id != balance.id) %}
                         <option value="{{ globalBalance.id }}">{{ globalBalance.name }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -44,21 +46,23 @@
     <div class="ui cards">
         {% for transaction in transactions %}
             <div class="card">
-                <div class="extra content">
+                <div class="content">
                     <div class="header">{{ transaction.description }}</div>
                     <div class="meta">
-                        {% if(transaction.balance_from) %}
-                        <a href="/balances/show?id={{ transaction.balance_from }}">{{ allBalances[transaction.balance_from].name }}</a>
+                        {% if (transaction.balance_from) %}
+                            <a href="/balances/show?id={{ transaction.balance_from }}" style="margin: 0">{{ allBalances[transaction.balance_from].name }}</a>
                         {% endif %}
                         &rarr;
                         <a href="/balances/show?id={{ transaction.balance_to }}">{{ allBalances[transaction.balance_to].name }}</a>
                     </div>
-                    <div class="description">
+                    <div class="description ">
                         <b>{{ transaction.amount | number_format(2, '.', ' ') }}</b>
                     </div>
                 </div>
                 <div class="extra content">
-                    <div class="description">{{ transaction.created_date | date('d.m.Y H:i') }}</div>
+                    <div class="description">
+                        {{ transaction.created_date | date('d.m.Y H:i') }}
+                    </div>
                 </div>
             </div>
         {% endfor %}
