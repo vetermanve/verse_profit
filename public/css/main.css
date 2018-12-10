@@ -116,3 +116,7 @@ semantic tricks
 small, small a {
     color: gray !important;
 }
+
+.ui.grid.compact>.column {
+    padding: 0.2rem 1rem !important;
+}
