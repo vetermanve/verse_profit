@@ -16,15 +16,15 @@
                     <div class="ui small feed">
                         <div class="ui compact grid">
                             {% for plan in day.plans %}
-                                <div class="ten wide column ellipse">
+                                <div class="twelve wide column ellipse">
                                     <a href="/plans/?id={{ plan.id }}">{{ plan.name }}</a>
                                 </div>
-                                <div class="six wide column right aligned" style="white-space: nowrap">
+                                <div class="four wide column right aligned" style="white-space: nowrap">
                                     {{ plan.amount | number_format(0, '.', ' ') }}
                                 </div>
                             {% endfor %}
                             {% for transaction in day.transactions %}
-                                <div class="ten wide column ellipse">
+                                <div class="twelve wide column ellipse">
                                     <a href="/balances-transactions/?id={{ transaction.id }}">{{ transaction.description }}</a><br>
                                     <small>
                                         <a href="/balances/show?id={{ transaction.balance_from }}"
@@ -33,7 +33,7 @@
                                         <a href="/balances/show?id={{ transaction.balance_to }}">{{ balances[transaction.balance_to].name }}</a>
                                     </small>
                                 </div>
-                                <div class="six wide column right aligned" style="white-space: nowrap">
+                                <div class="four wide column right aligned" style="white-space: nowrap">
                                     {{ transaction.amount | number_format(0, '.', ' ') }}
                                 </div>
                             {% endfor %}
