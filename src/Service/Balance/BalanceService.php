@@ -207,6 +207,10 @@ class BalanceService
             [TransactionModel::CREATED_DATE, Compare::LESS_OR_EQ, $toDate],
         ], $limit, __METHOD__);
 
+        uasort($transactions, function ($tr1, $tr2) {
+            return $tr1[TransactionModel::CREATED_DATE] <= $tr2[TransactionModel::CREATED_DATE] ? 1 : -1;
+        });
+
         return $transactions;
     }
 }
