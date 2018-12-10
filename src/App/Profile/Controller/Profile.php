@@ -10,6 +10,7 @@ namespace App\Profile\Controller;
 
 
 use Base\Controller\BasicController;
+use DateTimeZone;
 use Service\User\Model\UserModel;
 use Service\User\Model\UserNicknameModel;
 use Service\User\UserService;
@@ -29,6 +30,7 @@ class Profile extends BasicController
             'message' => $this->message,
             'user' => $user,
             'nickname' => $nickname,
+            'timezones' => DateTimeZone::listIdentifiers(),
         ]);
     }
 
@@ -39,11 +41,19 @@ class Profile extends BasicController
         } else {
             $name = $this->p('name');
             $email = $this->p('email');
-
+            $timezone = $this->p('timezone');
+            
+            // lets check timezone
+            $date = new \DateTime();
+            if ($date->setTimezone(new DateTimeZone($timezone)) === false) {
+                $timezone = null; 
+            }
+            
             $userService = new UserService();
             $result = $userService->updateUser($this->_userId, [
                  UserModel::NAME => $name,
                  UserModel::EMAIL => $email,
+                 UserModel::TIMEZONE => $timezone,
             ]);
 
             $this->message = $result ? 'Данные успешно обновлены' : 'Не удалось обновить данные';

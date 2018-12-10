@@ -10,6 +10,7 @@ class UserModel
     public const NAME  = 'name';
     public const EMAIL = 'email';
     public const NICKNAME_ID = 'nickname_id';
+    public const TIMEZONE = 'timezone';
     
     public const VIRTUAL_NICKNAME = 'nickname';
 }

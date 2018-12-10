@@ -22,6 +22,14 @@
                 <label>Email</label>
                 <input type="email" name="email" placeholder="Email" value="{{ user.email }}"/>
             </div>
+            <div class="field">
+                <label>Часовой Пояс</label>
+                <select name="timezone" id="timezone" class="ui dropdown search">
+                    {% for timezone in timezones %}
+                        <option value="{{ timezone }}" {{ timezone == user.timezone ? 'selected' : '' }}>{{ timezone }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <button class="ui button" type="submit">Обновить данные</button>
         </form>
     </div>
