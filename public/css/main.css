@@ -112,3 +112,7 @@ semantic tricks
 .ui.cards .card .ui.form .fields {
     margin: 0;
 }
+
+small, small a {
+    color: gray !important;
+}

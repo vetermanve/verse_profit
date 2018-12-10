@@ -1,16 +1,9 @@
 {% extends _layout %}
 
 {% block content %}
-    <p><a href="/balances">&larr; Все счета</a></p>
-    <h1><a href="/balances/show?id={{ balance.id }}">{{ balance.name }}</a></h1>
-    <p>Баланс: <b>{{ balance.amount }}</b><br>Тип счета: {{ balanceTypes[balance.type] }}</p>
-    {% if(message) %}
-        <div class="ui success message">
-            {{ message }}
-        </div>
-        <p></p>
-    {% endif %}
+    <h1>Транзакции за послдений месяц</h1>
 
+    {% if false %}
     <h2>Добавить внесение</h2>
     <div class="ui form">
         <form action="/balances/addTransaction" method="post">
@@ -41,6 +34,7 @@
             <button class="ui button" type="submit">Добавить</button>
         </form>
     </div>
+    {% endif %}
 
     <h2>Транзакции</h2>
     <div class="ui cards">

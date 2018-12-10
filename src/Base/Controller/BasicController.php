@@ -44,12 +44,13 @@ abstract class BasicController extends BaseControllerProto
     {
         if ($this->_userId) {
             return [
-                'Главная'   => '/landing',
-                'Календарь' => '/calendar',
-                'Планы'     => '/plans',
-                'Счета'     => '/balances',
-                'Друзья'    => '/relations-users',
-                'Бюджеты'   => '/budgets',
+                // 'Главная'   => '/landing/',
+                'Календарь' => '/calendar/',
+                'Планы'     => '/plans/',
+                'Счета'     => '/balances/',
+                'Транзакции'=> '/balances-transactions/',
+                'Друзья'    => '/relations-users/',
+                'Бюджеты'   => '/budgets/',
             ];
         }
 
@@ -93,8 +94,15 @@ abstract class BasicController extends BaseControllerProto
                 ]
             );
         }
-
+        
+        $this->prepare();
+        
         return $this->{$this->method}();
+    }
+    
+    public function prepare () 
+    {
+        
     }
 
     public function validateMethod() : bool

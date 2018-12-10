@@ -18,12 +18,14 @@ class CalendarService
         return $result;
     }
     
-    public function getDaysOfMonthDate ($monthDate) : array
+    public function getDaysOfMonthDate ($monthDate, $timezone = 'UTC') : array
     {
         $monthDay = new \DateTime();
+        $monthDay->setTimezone(new \DateTimeZone($timezone));
         $monthDay->setTimestamp($monthDate);
 
         $nextMonth = new \DateTime();
+        $nextMonth->setTimezone(new \DateTimeZone($timezone));
         $nextMonth->setTimestamp($monthDate);
         $nextMonth->modify('first day of next month');
         $nextMonthStartDayTime = $nextMonth->getTimestamp();

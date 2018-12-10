@@ -5,9 +5,13 @@ namespace App\Calendar\Controller;
 
 
 use Base\Controller\BasicController;
+use Service\Balance\BalanceService;
+use Service\Balance\Model\BalanceModel;
+use Service\Balance\Model\TransactionModel;
 use Service\Calendar\CalendarService;
 use Service\Plan\Model\PlanModel;
 use Service\Plan\PlansService;
+use Service\User\Model\UserModel;
 
 class Calendar extends BasicController
 {
@@ -30,7 +34,7 @@ class Calendar extends BasicController
      */
     private $month;
 
-    public function run()
+    public function prepare()
     {
         $this->yearNumber = $this->p('year');
         $this->monthNumber = $this->p('month');
@@ -47,16 +51,18 @@ class Calendar extends BasicController
             $this->monthNumber = $this->getState('month', (int) date('m'));
         }
 
-        $this->month = mktime(0, 0, 0, $this->monthNumber, 1, $this->yearNumber);
-
-        return parent::run();
+        $monthDate = new \DateTime('', new \DateTimeZone($this->_user[UserModel::TIMEZONE]));
+        $monthDate->setDate($this->yearNumber, $this->monthNumber, 1);
+        $monthDate->setTime(0,0,0);
+        
+        $this->month = $monthDate->getTimestamp();
     }
 
     public function index()
     {
         $calendar = new CalendarService();
-
-        $days = $calendar->getDaysOfMonthDate($this->month);
+        $timezone = new \DateTimeZone($this->_user[UserModel::TIMEZONE]);
+        $days = $calendar->getDaysOfMonthDate($this->month, $this->_user[UserModel::TIMEZONE]);
 
         $plans = new PlansService();
         $minDay = min($days);
@@ -71,10 +77,11 @@ class Calendar extends BasicController
 
         $message = '';
         foreach ($plans as $plan) {
-            $dayTime = new \DateTime();
+            $dayTime = new \DateTime('', $timezone);
             $dayTime->setTimestamp($plan[PlanModel::DATE]);
             $dayTime->setTime(0, 0, 0);
             $day = $dayTime->getTimestamp();
+            
             if (!isset($daysPlans[$day])) {
                 $message .= ', Suggestion ' . date('c') . 'not found a day';
                 continue;
@@ -83,32 +90,32 @@ class Calendar extends BasicController
             $daysPlans[$day]['plans'][] = $plan;
         }
 
-        foreach ($daysPlans as &$plansData) {
-            $increase = 0;
-            $decrease = 0;
-
-            foreach ($plansData['plans'] as $plan) {
-                if ($plan[PlanModel::AMOUNT] > 0) {
-                    $increase += $plan[PlanModel::AMOUNT];
-                } else {
-                    $decrease += $plan[PlanModel::AMOUNT];
-                }
+        $balanceService = new BalanceService();
+        $balances = $balanceService->getBudgetBalances($this->_budgetId);
+        $balancesIds = array_column($balances, BalanceModel::ID);
+        $transactions = $balanceService->getBalancesTransactions($balancesIds, $minDay, $maxDay);
+        
+        foreach ($transactions as $transaction) {
+            $dayTime = new \DateTime('', $timezone);
+            $dayTime->setTimestamp($transaction[TransactionModel::CREATED_DATE]);
+            $dayTime->setTimezone($timezone);
+            $dayTime->setTime(0, 0, 0);
+            $day = $dayTime->getTimestamp();
+            if (!isset($daysPlans[$day])) {
+                $message .= 'Transactions ' . date('c', $transaction[TransactionModel::CREATED_DATE]) . 'not found a day';
+                continue;
             }
 
-            $plansData['increase'] = $increase;
-            $plansData['decrease'] = $decrease;
-            $plansData['balance'] = $increase + $decrease;
+            $daysPlans[$day]['transactions'][] = $transaction;
         }
-        unset ($plansData);
-
-        $message && var_dump($message);
-
+        
         return $this->_render('month', [
             'month'     => $this->month,
             'year'      => $this->yearNumber,
             'days'      => $days,
             'daysPlans' => $daysPlans,
             'message'   => $message,
+            'balances'  => $balances,
         ]);
     }
 

@@ -12,11 +12,9 @@
                         Баланс дня {{ day.balance | number_format(0, '.', ' ') }}
                     </div>
                 </div>
-                {% if day.plans is not empty %}
-                    {% set plans = day.plans %}
-                    <div class="content">
+                <div class="content">
                         <div class="ui small feed">
-                            {% for plan in plans %}
+                            {% for plan in day.plans %}
                                 <div class="event">
                                     <div class="content">
                                         <div class="summary">
@@ -32,11 +30,29 @@
                                     </div>
                                 </div>
                             {% endfor %}
+                        {% for transaction in day.transactions %}
+                            <div class="event">
+                                <div class="content">
+                                    <div class="summary">
+                                        <div class="ui grid">
+                                            <div class="ten wide column ellipse">
+                                                <a href="/balances-transactions/?id={{ transaction.id }}">{{ transaction.description }}</a><br>
+                                                <small>
+                                                    <a href="/balances/show?id={{ transaction.balance_from }}" style="margin: 0">{{ balances[transaction.balance_from].name }}</a>
+                                                    &rarr;
+                                                    <a href="/balances/show?id={{ transaction.balance_to }}">{{ balances[transaction.balance_to].name }}</a>
+                                                </small>
+                                            </div>
+                                            <div class="six wide column right aligned" style="white-space: nowrap">
+                                                {{ transaction.amount | number_format(0, '.', ' ') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                         </div>
                     </div>
-                {% else %}
-                    <div class="content"></div>
-                {% endif %}
                 <div class="extra content">
                     <div class="meta">
                         Приход {{ day.increase | number_format(0, '.', ' ') }},

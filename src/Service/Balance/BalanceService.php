@@ -82,9 +82,9 @@ class BalanceService
         if (!$transaction) {
             return false;
         }
-        
+
         $transactionStorage->write()->update($transactionId, [
-            TransactionModel::STATUS => TransactionStatus::STARTED 
+            TransactionModel::STATUS => TransactionStatus::STARTED,
         ], __METHOD__);
 
         if ($balanceFromId) {
@@ -99,17 +99,17 @@ class BalanceService
             $out = $movementStorage->write()->insert($movementOutId, $movementOutBind, __METHOD__);
             if (!$out) {
                 $transactionStorage->write()->update($transactionId, [
-                    TransactionModel::STATUS => TransactionStatus::CREATED
+                    TransactionModel::STATUS => TransactionStatus::CREATED,
                 ], __METHOD__);
-                
+
                 return false;
             }
 
             $transactionStorage->write()->update($transactionId, [
-                TransactionModel::STATUS => TransactionStatus::MONEY_OUT
+                TransactionModel::STATUS => TransactionStatus::MONEY_OUT,
             ], __METHOD__);
         }
-        
+
         $movementInId = Uuid::v4();
         $movementInBind = [
             MovementModel::ID             => $movementInId,
@@ -121,61 +121,62 @@ class BalanceService
         $in = $movementStorage->write()->insert($movementInId, $movementInBind, __METHOD__);
         if (!$in) {
             if (isset($movementOutId)) {
-                $movementStorage->write()->remove($movementOutId, __METHOD__); 
+                $movementStorage->write()->remove($movementOutId, __METHOD__);
             }
-            
+
             $transactionStorage->write()->update($transactionId, [
-                TransactionModel::STATUS => TransactionStatus::CREATED
+                TransactionModel::STATUS => TransactionStatus::CREATED,
             ], __METHOD__);
-            
+
             return false;
         }
 
         $transactionStorage->write()->update($transactionId, [
-            TransactionModel::STATUS => TransactionStatus::MONEY_IN
+            TransactionModel::STATUS => TransactionStatus::MONEY_IN,
         ], __METHOD__);
-        
+
         $this->updateBalance($balanceToId);
-        
+
         if (isset($movementOutId)) {
             $this->updateBalance($balanceFromId);
         }
 
         $transactionStorage->write()->update($transactionId, [
-            TransactionModel::STATUS => TransactionStatus::FINISHED
+            TransactionModel::STATUS => TransactionStatus::FINISHED,
         ], __METHOD__);
-        
+
         return $transaction;
     }
-    
-    public function updateBalance ($balanceId) 
+
+    public function updateBalance($balanceId)
     {
         $balance = $this->getBalanceStorage()->read()->get($balanceId, __METHOD__);
         if (!$balance) {
             return false;
         }
-        
+
         // $lastMovementDate = $balance[BalanceModel::LAST_MOVEMENT_DATE];
         // $lastMovementId = $balance[BalanceModel::LAST_MOVEMENT_ID];
         $movements = $this->getMovementStorage()->search()->find([
-            [MovementModel::BALANCE_ID, Compare::EQ, $balanceId]
+            [MovementModel::BALANCE_ID, Compare::EQ, $balanceId],
         ], 10000, __METHOD__);
-        
+
         if (!\is_array($movements)) {
             return false;
         }
-        
+
         $amount = 0;
         foreach ($movements as &$movement) {
-            $amount += (float)$movement[MovementModel::AMOUNT];
-        } unset($movement);
-        
+            $amount += (float) $movement[MovementModel::AMOUNT];
+        }
+        unset($movement);
+
         return $this->getBalanceStorage()->write()->update($balanceId, [
-             BalanceModel::AMOUNT => $amount
+            BalanceModel::AMOUNT => $amount,
         ], __METHOD__);
     }
-    
-    public function getBalance ($balanceId) 
+
+    public function getBalance($balanceId)
     {
         return $this->getBalanceStorage()->read()->get($balanceId, __METHOD__);
     }
@@ -185,14 +186,27 @@ class BalanceService
         $movements = $this->getMovementStorage()->search()->find([
             [MovementModel::BALANCE_ID, Compare::EQ, $balanceId],
         ], $limit, __METHOD__);
-        
+
         if (!$movements) {
-            return []; 
+            return [];
         }
-        
-        $transactionsIds = array_column($movements, MovementModel::TRANSACTION_ID); 
+
+        $transactionsIds = array_column($movements, MovementModel::TRANSACTION_ID);
         $transactions = $this->getTransactionStorage()->read()->mGet($transactionsIds, __METHOD__);
-        
+
+        return $transactions;
+    }
+
+
+    public function getBalancesTransactions($balanceIds, $fromDate, $toDate, $limit = 1000)
+    {
+        $transactions = $this->getTransactionStorage()->search()->find([
+            [TransactionModel::BALANCE_FROM, Compare::IN, $balanceIds],
+            [TransactionModel::BALANCE_TO, Compare::IN, $balanceIds],
+            [TransactionModel::CREATED_DATE, Compare::GRATER_OR_EQ, $fromDate],
+            [TransactionModel::CREATED_DATE, Compare::LESS_OR_EQ, $toDate],
+        ], $limit, __METHOD__);
+
         return $transactions;
     }
 }
