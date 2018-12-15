@@ -7,6 +7,7 @@ namespace App\Balances\Controller;
 use Base\Controller\BasicController;
 use Service\Balance\BalanceService;
 use Service\Balance\Model\BalanceModel;
+use Service\Balance\Model\BalanceStatus;
 use Service\Balance\Model\BalanceType;
 use Service\Balance\Model\TransactionModel;
 
@@ -57,11 +58,17 @@ class Balances extends BasicController
         $id = $this->p('id');
         $balanceService = new BalanceService();
         if ($id) {
-            $res = $balanceService->removeBalance($id);
+            $res = $balanceService->updateBalance(
+                $id,
+                [
+                    BalanceModel::STATUS => BalanceStatus::STATUS_ARCHIVED
+                ]
+            );
+            
             if ($res) {
-                $this->message = 'Баланс успешно удален';
+                $this->message = 'Баланс успешно архивирован';
             } else {
-                $this->message = 'Не удалось удалить баланс';
+                $this->message = 'Не удалось заархивировать баланс';
             }
         }
 

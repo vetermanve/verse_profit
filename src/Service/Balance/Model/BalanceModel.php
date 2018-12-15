@@ -31,6 +31,11 @@ class BalanceModel
      * Balance currency amount
      */
     public const AMOUNT = 'amount';
+ 
+    /**
+     * Status of balance
+     */
+    public const STATUS = 'status';
     
     // const BALANCE_TYPE = 'balance_type'; // ?
     // public const NAME_OFFICIAL = 'name_official';

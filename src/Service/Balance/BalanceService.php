@@ -4,6 +4,7 @@
 namespace Service\Balance;
 
 use Service\Balance\Model\BalanceModel;
+use Service\Balance\Model\BalanceStatus;
 use Service\Balance\Model\BalanceType;
 use Service\Balance\Model\MovementModel;
 use Service\Balance\Model\TransactionModel;
@@ -46,10 +47,11 @@ class BalanceService
         return $this->getBalanceStorage()->write()->insert($id, $bind, __METHOD__);
     }
 
-    public function getBudgetBalances($budgetId)
+    public function getBudgetBalances($budgetId, $status = BalanceStatus::STATUS_ACTIVE)
     {
         $balances = $this->getBalanceStorage()->search()->find([
             [BalanceModel::BUDGET_ID, Compare::EQ, $budgetId],
+            [BalanceModel::STATUS, Compare::EMPTY_OR_EQ, $status],
         ], 1000, __METHOD__) ? : [];
 
         return $balances ? array_column($balances, null, BalanceModel::ID) : [];
@@ -58,6 +60,25 @@ class BalanceService
     public function removeBalance($balanceId)
     {
         return $this->getBalanceStorage()->write()->remove($balanceId, __METHOD__);
+    }
+    
+    public function updateBalance ($balanceId, $bind) 
+    {
+        $allowedFields = [
+            BalanceModel::TYPE,
+            BalanceModel::NAME,
+            BalanceModel::STATUS,
+        ];
+
+        $update = [];
+        
+        foreach ($allowedFields as $field) {
+            if(isset($bind[$field])) {
+                $update[$field] = $bind[$field];         
+            }
+        }
+        
+        return $this->getBalanceStorage()->write()->update($balanceId, $update, __METHOD__);
     }
 
     public function addTransactionAndMovements($amount, $description, $balanceToId, $balanceFromId = null)
@@ -135,10 +156,10 @@ class BalanceService
             TransactionModel::STATUS => TransactionStatus::MONEY_IN,
         ], __METHOD__);
 
-        $this->updateBalance($balanceToId);
+        $this->updateRecalculateBalance($balanceToId);
 
         if (isset($movementOutId)) {
-            $this->updateBalance($balanceFromId);
+            $this->updateRecalculateBalance($balanceFromId);
         }
 
         $transactionStorage->write()->update($transactionId, [
@@ -148,7 +169,7 @@ class BalanceService
         return $transaction;
     }
 
-    public function updateBalance($balanceId)
+    public function updateRecalculateBalance($balanceId)
     {
         $balance = $this->getBalanceStorage()->read()->get($balanceId, __METHOD__);
         if (!$balance) {
