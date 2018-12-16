@@ -53,7 +53,7 @@ class Balances extends BasicController
         return $this->index();
     }
 
-    public function delete()
+    public function archive()
     {
         $id = $this->p('id');
         $balanceService = new BalanceService();

@@ -13,15 +13,33 @@
         <form action="/plans/add" method="post">
             <div class="field">
                 <label>Что?</label>
-                <input type="text" name="name" placeholder="Что планируем?"/>
+                <input type="text" name="name" placeholder="Опиши план"/>
             </div>
             <div class="field">
-                <label>Когда?</label>
-                <input type="date" name="date" placeholder="Когда?" value="{{ date | date('d.m.Y') }}"/>
+                <label>Откуда?</label>
+                <select name="balance_from" id="type" class="ui dropdown search">
+                    <option value="">С какого счета</option>
+                    {% for balance in balances %}
+                        <option value="{{ balance.id }}">{{ balance.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Куда?</label>
+                <select name="balance_to" id="type" class="ui dropdown search">
+                    <option value="">На какой счет</option>
+                    {% for balance in balances %}
+                        <option value="{{ balance.id }}">{{ balance.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="field">
                 <label>Сколько?</label>
                 <input type="number" name="amount" placeholder="Сколько денег"/>
+            </div>
+            <div class="field">
+                <label>Когда?</label>
+                <input type="date" name="date" placeholder="Когда?" value="{{ date | date('d.m.Y') }}"/>
             </div>
             <button class="ui button" type="submit">Добавить план</button>
         </form>
@@ -29,19 +47,41 @@
 
     <h1>Планы </h1>
     <div class="ui cards">
-        {% for suggestion in suggestions %}
-        <div class="card">
-            <div class="content">
-                <div class="header">{{ suggestion.name }}</div>
-                <div class="meta">{{ suggestion.date | date('d M') }}</div>
-                <div class="description">
-                    {{ suggestion.amount }}
+        {% for plan in plans %}
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ plan.name }}</div>
+                    <div class="meta">
+                        {% if (plan.balance_from) %}
+                            <a href="/balances/show?id={{ plan.balance_from }}" style="margin: 0">{{
+                                balances[plan.balance_from]
+                                ? balances[plan.balance_from].name
+                                : plan.balance_from
+                                }}</a>
+                        {% else %}
+                            <span style="margin: 0">Откуда нибудь</span>
+                        {% endif %}
+                        &rarr;
+                        {% if (plan.balance_to) %}
+                        <a href="/balances/show?id={{ plan.balance_to }}">{{
+                            balances[plan.balance_to]
+                            ? balances[plan.balance_to].name
+                            : (plan.balance_to ?: "В Космос?")
+                            }}</a>
+                        {% else %}
+                            <span>Куда нибудь</span>
+                        {% endif %}
+                    </div>
+                    <div class="meta">{{ plan.date | date('d.m.Y', user.timezone) }}</div>
+                    <div class="description">
+                        {{ plan.amount }}
+                    </div>
+                </div>
+                <div class="extra content">
+                    <a href="/plans/edit?id={{ plan.id }}" class="ui small button">изменить</a>
+                    <a href="/plans/delete?id={{ plan.id }}" class="ui small button">удалить</a>
                 </div>
             </div>
-            <div class="extra content">
-                <a href="/plans/delete?id={{ suggestion.id }}" class="ui small button">удалить</a>
-            </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
     </div>
 {% endblock %}

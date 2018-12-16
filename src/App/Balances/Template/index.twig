@@ -19,13 +19,10 @@
                 <div class="card">
                     <div class="content">
                         <div class="header"><a href="/balances/show?id={{ balance.id }}" >{{ balance.name }}</a></div>
-                        <div class="meta">{{ balanceTypes[balance.type] }}</div>
+                        {#<div class="meta">{{ balanceTypes[balance.type] }}</div>#}
                         <div class="description">
-                            В наличии <b>{{ balance.amount | number_format(2, '.', ' ') }}</b>
+                            <b>{{ balance.amount | number_format(2, '.', ' ') }}</b>
                         </div>
-                    </div>
-                    <div class="extra content">
-                        <a href="/balances/delete?id={{ balance.id }}" class="ui small button">Удалить счет</a>
                     </div>
                 </div>
             {% endfor %}

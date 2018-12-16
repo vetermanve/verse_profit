@@ -3,7 +3,22 @@
 {% block content %}
     <p><a href="/balances">&larr; Все счета</a></p>
     <h1><a href="/balances/show?id={{ balance.id }}">{{ balance.name }}</a></h1>
-    <p>Баланс: <b>{{ balance.amount }}</b><br>Тип счета: {{ balanceTypes[balance.type] }}</p>
+    <div class="ui stackable two column grid">
+        <div class="stretched row">
+            <div class="column">
+                <div class="ui segment">
+                    Баланс: <b>{{ balance.amount }}</b><br>
+                    Тип счета: {{ balanceTypes[balance.type] }}
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui segment">
+                    <a href="/balances/archive?id={{ balance.id }}">Архивировать счет</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% if(message) %}
         <div class="ui success message">
             {{ message }}
@@ -24,8 +39,8 @@
                 <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
             </div>
             {#<div class="field">#}
-                {#<label>Когда?</label>#}
-                {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
+            {#<label>Когда?</label>#}
+            {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
             {#</div>#}
             <div class="field">
                 <label for="type">Со счета</label>
@@ -33,7 +48,7 @@
                     <option value="">Из космоса</option>
                     {% for globalBalance  in allBalances %}
                         {% if(globalBalance.id != balance.id) %}
-                        <option value="{{ globalBalance.id }}">{{ globalBalance.name }}</option>
+                            <option value="{{ globalBalance.id }}">{{ globalBalance.name }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
@@ -43,8 +58,6 @@
     </div>
 
     <h2>Транзакции</h2>
-    <div class="ui cards">
-        {% include "_transactionsCards.twig" %}
-    </div>
+    {% include "_transactionsCards.twig" %}
 
 {% endblock %}
