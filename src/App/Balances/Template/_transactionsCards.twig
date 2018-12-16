@@ -1,0 +1,32 @@
+{% for transaction in transactions %}
+    <div class="card">
+        <div class="content">
+            <div class="header">{{ transaction.description }}</div>
+            <div class="meta">
+                {% if (transaction.balance_from) %}
+                    <a href="/balances/show?id={{ transaction.balance_from }}" style="margin: 0">{{ 
+                        allBalances[transaction.balance_from] 
+                            ? allBalances[transaction.balance_from].name 
+                            : transaction.balance_from 
+                        }}</a>
+                {% else %}
+                    <span style="margin: 0">Из космоса</span>
+                {% endif %}
+                &rarr;
+                <a href="/balances/show?id={{ transaction.balance_to }}">{{ 
+                    allBalances[transaction.balance_to] 
+                        ? allBalances[transaction.balance_to].name 
+                        : (transaction.balance_to ?: "В Космос?") 
+                    }}</a>
+            </div>
+            <div class="description ">
+                <b>{{ transaction.amount | number_format(2, '.', ' ') }}</b>
+            </div>
+        </div>
+        <div class="extra content">
+            <div class="description">
+                {{ transaction.created_date | date('d.m.Y H:i', _user.timezone) }}
+            </div>
+        </div>
+    </div>
+{% endfor %}
