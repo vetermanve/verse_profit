@@ -23,6 +23,7 @@ class Configuration extends RunComponentProto
         ];
         
         $this->context->set('config', $config);
+        $this->context->set('env', $_ENV);
         
         Env::getContainer()->setModule(RunContext::class, $this->context);
     }

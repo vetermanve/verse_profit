@@ -46,4 +46,17 @@
             <button class="ui button" type="submit">Добавить никнейм</button>
         </form>
     </div>
+
+    <h2>Подтвердить почту</h2>
+    <div class="ui form">
+        <div class="ui info message">Никнейм нужен для того, чтобы вас смогли найти другие пользователи</div>
+        <form action="/profile/sendMail" method="post">
+            <input type="hidden" name="id" value="{{ user.id }}"/>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Email" value="{{ user.email }}"/>
+            </div>
+            <button class="ui button" type="submit">Подтвердить почту</button>
+        </form>
+    </div>
 {% endblock %}

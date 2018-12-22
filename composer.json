@@ -18,6 +18,11 @@
     "php" : "^7.2",
     "verse/run": "^0.0",
     "twig/twig": "^2.5",
-    "verse/storage": "^0.0.8"
+    "verse/storage": "^0.0.8",
+    "mailgun/mailgun-php": "^2.6",
+    "php-http/message": "^1.7",
+    "guzzlehttp/guzzle": "^6.3",
+    "php-http/guzzle6-adapter": "1.1.1",
+    "vlucas/phpdotenv": "^2.5"
   }
 }

@@ -11,6 +11,9 @@ namespace App\Profile\Controller;
 
 use Base\Controller\BasicController;
 use DateTimeZone;
+use Service\Auth\AuthService;
+use Service\Notification\NotificationService;
+use Service\Notification\NotificationTypes;
 use Service\User\Model\UserModel;
 use Service\User\Model\UserNicknameModel;
 use Service\User\UserService;
@@ -92,6 +95,24 @@ class Profile extends BasicController
 
         $this->loadUser();
 
+        return $this->index();
+    }
+    
+    public function sendMail () 
+    {
+        $userId = $this->p('id');
+        $email = $this->p('email');
+        
+        if ($userId !== $this->_userId) {
+            $this->message = 'Ты пытаетешься обновить данные после авторизации под другим пользователем';
+        } else {
+            if (strpos($email, '@') !== false) {
+                $notification = new NotificationService();
+                $res = $notification->sendEmail(NotificationTypes::CHANNEL_VERIFY, $email, []);
+                $this->message = $res ? 'Cообщение успешно отрпавлено!' : 'Сообщение к сожалению не отправлено';
+            }
+        }
+        
         return $this->index();
     }
 

@@ -5,3 +5,4 @@ composer.lock
 /data/
 /semantic/
 /node_modules/
+/.env
