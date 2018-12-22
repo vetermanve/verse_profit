@@ -28,7 +28,6 @@ class EmailMailGunChannel implements NotificationChannelInterface
     public function send (AbstractNotification $emailMessage): bool
     {
         $domain = $this->config[self::CONFIG_DOMAIN];
-        var_dump($emailMessage);
         
         $response =  $this->getMailGunClinet()->messages()->send($domain, [
             'from'    => $emailMessage->from,
