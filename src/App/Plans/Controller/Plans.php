@@ -61,6 +61,33 @@ class Plans extends BasicController
         return $this->index();
     }
     
+    public function show () 
+    {
+        $id = $this->p('id');
+        
+        $service = new PlansService();
+        $plan = $service->getPlan($id);
+        
+        return $this->_render(__FUNCTION__, [
+            'plan' => $plan,
+        ]);
+    }
+    
+    public function edit ()
+    {
+        $id = $this->p('id');
+        
+        $service = new PlansService();
+        $plan = $service->getPlan($id);
+        
+        $balances = (new BalanceService())->getBudgetBalances($this->_budgetId);
+        
+        return $this->_render(__FUNCTION__, [
+            'plan' => $plan,
+            'balances' => $balances,
+        ]);
+    }
+    
     public function delete()
     {
         $id = $this->p('id');

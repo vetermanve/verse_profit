@@ -3,47 +3,7 @@
 {% block content %}
 
     <h1>Запланировать</h1>
-    {% if(message) %}
-        <div class="ui success message">
-            {{ message }}
-        </div>
-        <p></p>
-    {% endif %}
-    <div class="ui form">
-        <form action="/plans/add" method="post">
-            <div class="field">
-                <label>Что?</label>
-                <input type="text" name="name" placeholder="Опиши план"/>
-            </div>
-            <div class="field">
-                <label>Откуда?</label>
-                <select name="balance_from" id="type" class="ui dropdown search">
-                    <option value="">С какого счета</option>
-                    {% for balance in balances %}
-                        <option value="{{ balance.id }}">{{ balance.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="field">
-                <label>Куда?</label>
-                <select name="balance_to" id="type" class="ui dropdown search">
-                    <option value="">На какой счет</option>
-                    {% for balance in balances %}
-                        <option value="{{ balance.id }}">{{ balance.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="field">
-                <label>Сколько?</label>
-                <input type="number" name="amount" placeholder="Сколько денег"/>
-            </div>
-            <div class="field">
-                <label>Когда?</label>
-                <input type="date" name="date" placeholder="Когда?" value="{{ date | date('d.m.Y') }}"/>
-            </div>
-            <button class="ui button" type="submit">Добавить план</button>
-        </form>
-    </div>
+    {% include "_edit.twig" with { 'balances' : balances , 'action' : 'add' } %}
 
     <h1>Планы </h1>
     <div class="ui cards">
@@ -74,7 +34,7 @@
                     </div>
                     <div class="meta">{{ plan.date | date('d.m.Y', user.timezone) }}</div>
                     <div class="description">
-                        {{ plan.amount }}
+                        {{ plan.amount | number_format(2, '.', ' ')  }}
                     </div>
                 </div>
                 <div class="extra content">

@@ -33,9 +33,14 @@ class PlansService
         return $this->getStorage()->write()->insert(Uuid::v4(), $bind, __METHOD__);
     }
     
-    public function removePlan($suggestionId)
+    public function getPlan ($id, $default = []) 
     {
-        return $this->getStorage()->write()->remove($suggestionId, __METHOD__);
+        return $this->getStorage()->read()->get($id, __METHOD__, $default);
+    }
+    
+    public function removePlan($id)
+    {
+        return $this->getStorage()->write()->remove($id, __METHOD__);
     }
     
     public function getPlans($budgetId, $dateFrom = null, $dateTo = null, $limit = 1000)
