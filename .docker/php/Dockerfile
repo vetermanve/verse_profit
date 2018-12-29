@@ -34,6 +34,9 @@ RUN apk --no-cache --update add       \
                     libmemcached-dev  \
                     freetype-dev      \
                     imagemagick-dev   \
+                    bash              \
+                    libevent          \
+                    libevent-dev      \
         && rm -rf /tmp/*              \
         && rm -rf /var/cache/apk/*
 # END Core Software's Installation  -------------
@@ -84,37 +87,7 @@ RUN pecl install -o -f amqp             && \
 
 ADD ./50-custom.ini         /usr/local/etc/php/conf.d/
 
-# Installing Composer
-RUN printf "\nInstalling Composer\n\n"; \
-    EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig); \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
-    ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');"); \
-    if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; \
-    then \
-      >&2 echo 'ERROR: Invalid installer signature'; \
-      exit 1; \
-    else \
-      php composer-setup.php --install-dir=/usr/local/bin --filename=composer; \
-    fi; \
-    rm composer-setup.php
-
-RUN composer global require "hirak/prestissimo" && \
-    rm -rf /root/.composer/cache
-
 #
-#--------------------------------------------------------------------------
-# User www-data Configuration
-#--------------------------------------------------------------------------
-#
-RUN cp -r /root/.composer /home/www-data/ \
-    && chown -R www-data:www-data /home/www-data \
-    && usermod -d /home/www-data www-data
-
-ARG PUID=1000
-ENV PUID ${PUID}
-RUN if [ -n "${PUID}" ] && [ "${PUID%:*}" != 0 ]; then \
-  usermod -u ${PUID} www-data >/dev/null 2>&1 \
-;fi
 
 # END PHP Configuration --------------------------
 
@@ -134,23 +107,24 @@ RUN if [ -n "${PUID}" ] && [ "${PUID%:*}" != 0 ]; then \
 # SSH and GIT Installation
 #--------------------------------------------------------------------------
 #
-#ARG INSTALL_GIT=true
-#
-#RUN if [ ${INSTALL_GIT} = true ]; then \
-#    apt-get -qy update && apt-get -qy install --no-install-recommends libssl-dev tcl-dev gettext git && \
-#    apt-get autoremove -qy && apt-get clean -qy && rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* && \
-#    git --version \
-#;fi
+ARG INSTALL_GIT=true
+
+RUN if [ ${INSTALL_GIT} = true ]; then \
+    apk --no-cache --update add tcl-dev gettext git \
+        && rm -rf /tmp/*           \
+        && rm -rf /var/cache/apk/* \
+        && git --version \
+;fi
 
 
-ARG PHP_INSTALL_XDEBUG=false
+ARG PHP_INSTALL_XDEBUG=true
 
 RUN if [ ${PHP_INSTALL_XDEBUG} = true ]; then \
     docker-php-ext-enable xdebug \
 ;fi
 
 
-ARG PHP_XDEBUG_PORT=false
+ARG PHP_XDEBUG_PORT=9003
 
 RUN if [ ${PHP_XDEBUG_PORT} != false ]; then \
     echo "xdebug.remote_port=${PHP_XDEBUG_PORT}" >> /usr/local/etc/php/conf.d/50-custom.ini \
