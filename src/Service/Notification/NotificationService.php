@@ -5,13 +5,11 @@ namespace Service\Notification;
 
 
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerTrait;
-use Psr\Log\LogLevel;
-use Service\Notification\Model\EmailMessage;
 use Service\Notification\Render\EmailNotificationCreator;
 use Service\Notification\Render\Exception\RenderException;
 use Service\Notification\Transport\NotificationTransport;
 use Verse\Di\Env;
+use Verse\Modular\ModularContextProto;
 use Verse\Run\RunContext;
 
 class NotificationService
@@ -20,12 +18,27 @@ class NotificationService
     
     private $_domain = 'goals.vetermanve.com';
     
+    /**
+     * @var ModularContextProto 
+     */
+    private $_context;
+    
+    /**
+     * NotificationService constructor.
+     *
+     * @param ModularContextProto $context
+     */
+    public function __construct(ModularContextProto $context = null)
+    {
+        $this->_context = $context ?? Env::getContainer()->bootstrap(RunContext::class);
+    }
+    
     public function sendEmail($type, $to, $params) : bool 
     {
         $notification = null;
         
         $renderer = new EmailNotificationCreator();
-        $renderer->setDomain($this->_domain);
+        $renderer->setDomain($this->getAppDomain());
         
         // create notification
         try {
@@ -59,14 +72,16 @@ class NotificationService
         }
     }
     
+    public function getAppDomain () 
+    {
+        return $this->_context->getScope('env', 'APP_DOMAIN', $this->_domain);
+    }
+    
     private function _getTransportConfig () {
-        /* @var $context RunContext */
-        $context = Env::getContainer()->bootstrap(RunContext::class);
-        
         return [
-            'domain' => $this->_domain,
+            'domain' => $this->_context->getScope('env', 'MAILGUN_DOMAIN', $this->_domain),
             'mailgun' => [
-                'app_key' => $context->getScope('env', 'MAILGUN_APP_KEY')
+                'app_key' => $this->_context->getScope('env', 'MAILGUN_APP_KEY')
             ]
         ];
     }

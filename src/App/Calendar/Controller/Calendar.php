@@ -51,7 +51,7 @@ class Calendar extends BasicController
             $this->monthNumber = $this->getState('month', (int) date('m'));
         }
 
-        $monthDate = new \DateTime('', new \DateTimeZone($this->_user[UserModel::TIMEZONE]));
+        $monthDate = new \DateTime('', new \DateTimeZone($this->_user[UserModel::TIMEZONE] ?: 'UTC'));
         $monthDate->setDate($this->yearNumber, $this->monthNumber, 1);
         $monthDate->setTime(0,0,0);
         
@@ -61,7 +61,7 @@ class Calendar extends BasicController
     public function index()
     {
         $calendar = new CalendarService();
-        $timezone = new \DateTimeZone($this->_user[UserModel::TIMEZONE]);
+        $timezone = new \DateTimeZone($this->_user[UserModel::TIMEZONE] ?: 'UTC');
         $days = $calendar->getDaysOfMonthDate($this->month, $this->_user[UserModel::TIMEZONE]);
 
         $plans = new PlansService();

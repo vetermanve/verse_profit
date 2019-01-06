@@ -96,8 +96,19 @@ abstract class BasicController extends BaseControllerProto
         }
         
         $this->prepare();
-        
-        return $this->{$this->method}();
+        try {
+            return $this->{$this->method}();    
+        } catch (\Throwable $exception) {
+            return $this->_renderer->render('500', $this->_getRenderDefaultData() + [
+                    'error' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString(),
+                ],
+                'page',
+                [
+                    __DIR__ . '/Template',
+                ]
+            );     
+        }
     }
     
     public function prepare () 
@@ -120,6 +131,13 @@ abstract class BasicController extends BaseControllerProto
             '_pages'       => $this->_pages(),
             '_currentPage' => $this->requestWrapper->getResource(),
         ];
+    }
+    
+    public function authoriseUser ($userId) 
+    {
+        $this->_userId = $userId;
+        $this->_secureState->setState(self::STATE_KEY_USER_ID, $this->_userId, self::STATE_AUTHORISE_DEFAULT_TTL);
+        $this->loadUser();
     }
 
     public function loadUser()

@@ -7,6 +7,7 @@ namespace Service\Auth;
 use Service\Auth\Model\KeypairModel;
 use Service\Auth\Storage\KeyPairStorage;
 use Verse\Run\Util\Uuid;
+use Verse\Storage\Spec\Compare;
 
 class AuthService
 {
@@ -41,9 +42,24 @@ class AuthService
             KeypairModel::HASH    => $hash,
             KeypairModel::USER_ID => $userId,
         ];
-
-        $result = $this->getKeyPairStorage()->write()->insert($id, $bind, __METHOD__);
-        return $result;
+    
+        return $this->getKeyPairStorage()->write()->insert($id, $bind, __METHOD__);
+    }
+    
+    public function getPairByTypeAndKey ($type, $key) 
+    {
+        return $this->getKeyPairStorage()->search()->findOne(
+            [
+                [KeypairModel::TYPE, Compare::EQ, $type],
+                [KeypairModel::KEY, Compare::EQ, $key]
+            ],
+            __METHOD__
+        );
+    }
+    
+    public function removePairById ($id) 
+    {
+        return $this->getKeyPairStorage()->write()->remove($id, __METHOD__);
     }
 
     /**

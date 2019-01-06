@@ -29,15 +29,13 @@ class Signup extends BasicController
                 $user = $userApi->createUser([
                     UserModel::NAME  => $name,
                     UserModel::EMAIL => $email,
+                    UserModel::TIMEZONE => 'UTC',
                 ]);
 
                 if ($user && isset($user[UserModel::ID])) {
                     $userId = $user[UserModel::ID];
-                    $this->_userId = $userId;
-                    $this->_secureState->setState(self::STATE_KEY_USER_ID, $this->_userId, self::STATE_AUTHORISE_DEFAULT_TTL);
-
-                    $this->loadUser();
-
+                    $this->authoriseUser($userId);
+                    
                     $message = 'Вы успешно зарегистированы';
                 } else {
                     $message = 'Не удалось создать пользователя.';

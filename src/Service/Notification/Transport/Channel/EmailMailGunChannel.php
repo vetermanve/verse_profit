@@ -30,7 +30,7 @@ class EmailMailGunChannel implements NotificationChannelInterface
         $domain = $this->config[self::CONFIG_DOMAIN];
         
         $response =  $this->getMailGunClinet()->messages()->send($domain, [
-            'from'    => $emailMessage->from,
+            'from'    => 'help@'.$domain,
             'to'      => $emailMessage->to,
             'subject' => $emailMessage->subject,
             'html'    => $emailMessage->body,

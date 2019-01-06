@@ -6,5 +6,6 @@ namespace Service\Auth\Model;
 
 class KeyTypes
 {
-    const EMAIL = 'email';
+    public const EMAIL      = 'email';
+    public const EMAIL_CODE = 'email_code';
 }
