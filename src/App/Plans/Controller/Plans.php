@@ -33,32 +33,7 @@ class Plans extends BasicController
     
     public function add()
     {
-        $budgetId = $this->_budgetId;
-        
-        $name        = $this->p('name');
-        $dateRaw     = $this->p('date');
-        $date        = strtotime($dateRaw, time() - (new \DateTimeZone($this->_user['timezone']))->getOffset(new \DateTime())) ?? time();
-        $amount      = $this->p('amount');
-        $balanceFrom = $this->p('balance_from');
-        $balanceTo   = $this->p('balance_to');
-        
-        $service = new PlansService();
-        $bind    = [
-            PlanModel::NAME         => $name,
-            PlanModel::AMOUNT       => $amount,
-            PlanModel::DATE         => $date,
-            PlanModel::BUDGET_ID    => $budgetId,
-            PlanModel::BALANCE_FROM => $balanceFrom,
-            PlanModel::BALANCE_TO   => $balanceTo,
-        ];
-        
-        $plan = $service->addPlan($bind);
-        
-        if ($plan) {
-            $this->message = 'План сохранен! Дата: ' . date('d.m.Y', $date);
-        }
-        
-        return $this->index();
+        return $this->edit();
     }
     
     public function show () 
@@ -67,24 +42,68 @@ class Plans extends BasicController
         
         $service = new PlansService();
         $plan = $service->getPlan($id);
+    
+        $balances = (new BalanceService())->getBudgetBalances($this->_budgetId);
         
         return $this->_render(__FUNCTION__, [
             'plan' => $plan,
+            'balances' => $balances,
         ]);
     }
     
     public function edit ()
     {
         $id = $this->p('id');
+    
+        $budgetId = $this->_budgetId;
         
+        $name        = \trim($this->p('name'));
+        $dateRaw     = $this->p('date');
+        $date        = strtotime($dateRaw, time() - (new \DateTimeZone($this->_user['timezone']))->getOffset(new \DateTime())) ?? time();
+        $amount      = $this->p('amount');
+        $balanceFrom = $this->p('balance_from');
+        $balanceTo   = $this->p('balance_to');
+    
         $service = new PlansService();
-        $plan = $service->getPlan($id);
         
+        if ($name) {
+            $plan = [
+                PlanModel::NAME         => $name,
+                PlanModel::AMOUNT       => $amount,
+                PlanModel::DATE         => $date,
+                PlanModel::BUDGET_ID    => $budgetId,
+                PlanModel::BALANCE_FROM => $balanceFrom,
+                PlanModel::BALANCE_TO   => $balanceTo,
+            ];
+    
+            if ($id) {
+                $updatePlan = $service->updatePlan($id, $plan);
+                
+                $this->message = $updatePlan ? 'План обновелен!' : 'Не удалось обновить план :(';
+                
+                if ($updatePlan) {
+                   $plan = $updatePlan; 
+                }
+            } else {
+                $createdPlan = $service->addPlan($plan);
+                
+                $this->message = $createdPlan ? 'План сохранен!' : 'Не удалось сохранить план :(';
+                
+                if ($createdPlan) {
+                    $plan = $createdPlan;
+                }
+            }
+        } else {
+            $plan = $service->getPlan($id);
+        }
+                
         $balances = (new BalanceService())->getBudgetBalances($this->_budgetId);
-        
+    
         return $this->_render(__FUNCTION__, [
-            'plan' => $plan,
+            'action'   => isset($plan[PlanModel::ID]) ? 'edit' : 'add',
+            'plan'     => $plan,
             'balances' => $balances,
+            'message'  => $this->message,
         ]);
     }
     

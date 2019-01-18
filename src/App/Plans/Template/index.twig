@@ -10,7 +10,7 @@
         {% for plan in plans %}
             <div class="card">
                 <div class="content">
-                    <div class="header">{{ plan.name }}</div>
+                    <div class="header"><a href="/plans/show?id={{ plan.id }}">{{ plan.name }}</a></div>
                     <div class="meta">
                         {% if (plan.balance_from) %}
                             <a href="/balances/show?id={{ plan.balance_from }}" style="margin: 0">{{
@@ -38,8 +38,7 @@
                     </div>
                 </div>
                 <div class="extra content">
-                    <a href="/plans/edit?id={{ plan.id }}" class="ui small button">изменить</a>
-                    <a href="/plans/delete?id={{ plan.id }}" class="ui small button">удалить</a>
+                    <a href="/plans/show?id={{ plan.id }}" class="ui button">Посмотреть</a>
                 </div>
             </div>
         {% endfor %}

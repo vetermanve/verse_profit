@@ -33,6 +33,11 @@ class PlansService
         return $this->getStorage()->write()->insert(Uuid::v4(), $bind, __METHOD__);
     }
     
+    public function updatePlan($id, $bind)
+    {
+        return $this->getStorage()->write()->update($id, $bind, __METHOD__);
+    }
+    
     public function getPlan ($id, $default = []) 
     {
         return $this->getStorage()->read()->get($id, __METHOD__, $default);
@@ -60,7 +65,7 @@ class PlansService
         $result = $this->getStorage()->search()->find($filter, $limit, __METHOD__);
         
         uasort($result, function ($a1, $a2) {
-            return $a1[PlanModel::DATE] > $a2[PlanModel::DATE] ? -1 : 1;
+            return $a1[PlanModel::DATE] < $a2[PlanModel::DATE] ? -1 : 1;
         });
         
         return $result;

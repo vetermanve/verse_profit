@@ -1,38 +1,33 @@
 {% extends _layout %}
 
 {% block content %}
-    <h1>{{ plan.name }}</h1>
-    <div class="ui cards">
-        <div class="card">
-            <div class="content">
-                <div class="header">{{ plan.name }}</div>
-                <div class="meta">
-                    {% if (plan.balance_from) %}
-                        <a href="/balances/show?id={{ plan.balance_from }}"
-                           style="margin: 0">{{ balances[plan.balance_from]
-                            ? balances[plan.balance_from].name
-                            : plan.balance_from }}</a>
-                    {% else %}
-                        <span style="margin: 0">Откуда нибудь</span>
-                    {% endif %}
-                    &rarr;
-                    {% if (plan.balance_to) %}
-                        <a href="/balances/show?id={{ plan.balance_to }}">{{ balances[plan.balance_to]
-                            ? balances[plan.balance_to].name
-                            : (plan.balance_to ?: "В Космос?") }}</a>
-                    {% else %}
-                        <span>Куда нибудь</span>
-                    {% endif %}
-                </div>
-                <div class="meta">{{ plan.date | date('d.m.Y', user.timezone) }}</div>
-                <div class="description">
-                    {{ plan.amount | number_format(2, '.', ' ') }}
-                </div>
-            </div>
-            <div class="extra content">
-                <a href="/plans/edit?id={{ plan.id }}" class="ui small button">изменить</a>
-                <a href="/plans/delete?id={{ plan.id }}" class="ui small button">удалить</a>
-            </div>
-        </div>
-    </div>
+    <p><a href="/plans">&larr; Все планы</a></p>
+    <h1 class="ui header">
+        {{ plan.name }}
+        <div class="sub header">{{ plan.date | date('d.m.Y', user.timezone) }}</div>
+    </h1>
+    <p>
+        {{ plan.amount | number_format(2, '.', ' ') }}
+        <br>
+        {% if (plan.balance_from) %}
+            <a href="/balances/show?id={{ plan.balance_from }}"
+               style="margin: 0">{{ balances[plan.balance_from]
+                ? balances[plan.balance_from].name
+                : plan.balance_from }}</a>
+        {% else %}
+            <span style="margin: 0">Откуда нибудь</span>
+        {% endif %}
+        &rarr;
+        {% if (plan.balance_to) %}
+            <a href="/balances/show?id={{ plan.balance_to }}">{{ balances[plan.balance_to]
+                ? balances[plan.balance_to].name
+                : (plan.balance_to ?: "В Космос?") }}</a>
+        {% else %}
+            <span>Куда нибудь</span>
+        {% endif %}
+    </p>
+    <p>
+        <a href="/plans/edit?id={{ plan.id }}" class="ui button">изменить</a>
+        <a href="/plans/delete?id={{ plan.id }}" class="ui button">удалить</a>
+    </p>
 {% endblock %}
