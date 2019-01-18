@@ -1,19 +1,7 @@
 {% extends _layout %}
 
 {% block content %}
-    <style type="text/css">
-        body > .grid {
-            height: 100%;
-        }
-
-        #login-form .column {
-            max-width: 450px;
-        }
-
-        #login-form {
-            height: 80%;
-        }
-    </style>
+    {% include '_styles.twig' %}
     {% if(authorised == false) %}
         <div class="ui middle aligned center aligned grid" id="login-form">
             <div class="column">
@@ -55,10 +43,6 @@
             </div>
         </div>
     {% else %}
-        Ты успещно авторизован! <br>
-        <small>Пользователь {{ _userId }}.</small>
-        <form action="/landing/logout" method="post">
-            <input type="submit" value="Выйти"/><br>
-        </form>
+        Ты успешно авторизован!
     {% endif %}
 {% endblock %}

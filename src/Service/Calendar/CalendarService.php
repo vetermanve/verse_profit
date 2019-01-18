@@ -18,8 +18,9 @@ class CalendarService
         return $result;
     }
     
-    public function getDaysOfMonthDate ($monthDate, $timezone = 'UTC') : array
+    public function getDaysOfMonthDate ($monthDate, $timezone = null) : array
     {
+        $timezone  = $timezone ?: 'UTC';
         $monthDay = new \DateTime();
         $monthDay->setTimezone(new \DateTimeZone($timezone));
         $monthDay->setTimestamp($monthDate);
