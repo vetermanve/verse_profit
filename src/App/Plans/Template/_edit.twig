@@ -1,0 +1,44 @@
+{# values : { 'plan' : plan , 'balances' : balances , 'message' : message, 'action' : 'add|edit' } #}
+
+{% if (message) %}
+    <div class="ui success message">
+        {{ message }}
+    </div>
+    <p></p>
+{% endif %}
+<div class="ui form">
+    <form action="/plans/{{ action }}" method="post">
+        <input type="hidden" name="id" value="{{ plan.id ?: '' }}" />
+        <div class="field">
+            <label>Что?</label>
+            <input type="text" name="name" placeholder="Опиши план" value="{{ plan.name ?: '' }}"/>
+        </div>
+        <div class="field">
+            <label>Откуда?</label>
+            <select name="balance_from" id="type" class="ui dropdown search">
+                <option value="">С какого счета</option>
+                {% for balance in balances %}
+                    <option value="{{ balance.id }}" {{ balance.id == plan.balance_from ? 'selected' : '' }} >{{ balance.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label>Куда?</label>
+            <select name="balance_to" id="type" class="ui dropdown search">
+                <option value="">На какой счет</option>
+                {% for balance in balances %}
+                    <option value="{{ balance.id }}" {{ balance.id == plan.balance_to ? 'selected' : '' }} >{{ balance.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label>Сколько?</label>
+            <input type="number" name="amount" placeholder="Сколько денег" value="{{ plan.amount }}"/>
+        </div>
+        <div class="field">
+            <label>Когда?</label>
+            <input type="date" name="date" placeholder="Когда?" value="{{ (plan.date ?: date) | date('d.m.Y') }}"/>
+        </div>
+        <button class="ui button" type="submit">{{ action == 'add' ? 'Добавить' : 'Изменить' }} план</button>
+    </form>
+</div>

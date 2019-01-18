@@ -7,7 +7,7 @@
         <div class="stretched row">
             <div class="column">
                 <div class="ui segment">
-                    Баланс: <b>{{ balance.amount }}</b><br>
+                    Баланс: <b>{{ balance.amount | number_format(2, '.', ' ')  }}</b><br>
                     Тип счета: {{ balanceTypes[balance.type] }}
                 </div>
             </div>
