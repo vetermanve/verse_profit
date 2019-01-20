@@ -39,6 +39,16 @@
             <label>Когда?</label>
             <input type="date" name="date" placeholder="Когда?" value="{{ (plan.date ?: date) | date('d.m.Y') }}"/>
         </div>
+        {% if (action != 'add') %}
+        <div class="field">
+            <label>Состояние</label>
+            <select name="status" id="type" class="ui dropdown search">
+                {% for code, status in statuses %}
+                    <option value="{{ code }}" {{ code == plan.status ? 'selected' : '' }} >{{ status }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
         <button class="ui button" type="submit">{{ action == 'add' ? 'Добавить' : 'Изменить' }} план</button>
     </form>
 </div>

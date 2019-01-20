@@ -5,6 +5,7 @@ namespace Service\Plan;
 
 
 use Service\Plan\Model\PlanModel;
+use Service\Plan\Model\PlanStatus;
 use Service\Plan\Storage\PlanStorage;
 use Verse\Run\Util\Uuid;
 use Verse\Storage\Spec\Compare;
@@ -38,7 +39,7 @@ class PlansService
         return $this->getStorage()->write()->update($id, $bind, __METHOD__);
     }
     
-    public function getPlan ($id, $default = []) 
+    public function getPlan($id, $default = [])
     {
         return $this->getStorage()->read()->get($id, __METHOD__, $default);
     }
@@ -46,6 +47,22 @@ class PlansService
     public function removePlan($id)
     {
         return $this->getStorage()->write()->remove($id, __METHOD__);
+    }
+    
+    public function getPlansWithStatuses($budgetId, $statuses, $limit = 1000)
+    {
+        $filter = [
+            [PlanModel::BUDGET_ID, Compare::EQ, $budgetId],
+            [PlanModel::STATUS, Compare::IN, $statuses]
+        ];
+        
+        $result = $this->getStorage()->search()->find($filter, $limit, __METHOD__);
+        
+        uasort($result, function ($a1, $a2) {
+            return $a1[PlanModel::DATE] < $a2[PlanModel::DATE] ? -1 : 1;
+        });
+        
+        return $result;
     }
     
     public function getPlans($budgetId, $dateFrom = null, $dateTo = null, $limit = 1000)
@@ -69,5 +86,15 @@ class PlansService
         });
         
         return $result;
+    }
+    
+    public function getPlanStatuses()
+    {
+        return [
+            PlanStatus::CREATED   => 'Не запланирован',
+            PlanStatus::PLANNED   => 'Запланирован',
+            PlanStatus::COMPLETED => 'Завершен',
+            PlanStatus::DELETED   => 'Удален',
+        ];
     }
 }
