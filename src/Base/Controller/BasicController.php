@@ -83,16 +83,7 @@ abstract class BasicController extends BaseControllerProto
 
         // check user_id
         if (!method_exists($this, $this->method)) {
-            $data = [
-                    'url' => $this->requestWrapper->getResource(),
-                ] + $this->_getRenderDefaultData();
-
-            return $this->_renderer->render('404', $data,
-                'page',
-                [
-                    __DIR__ . '/Template',
-                ]
-            );
+            return $this->_page404();
         }
         
         $this->prepare();
@@ -164,4 +155,18 @@ abstract class BasicController extends BaseControllerProto
     }
 
     abstract protected function getClassDirectory();
+    
+    protected function _page404()
+    {
+        $data = [
+                'url' => $this->requestWrapper->getResource(),
+            ] + $this->_getRenderDefaultData();
+    
+        return $this->_renderer->render('404', $data,
+            'page',
+            [
+                __DIR__ . '/Template',
+            ]
+        );
+    }
 }

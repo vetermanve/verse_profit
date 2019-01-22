@@ -7,7 +7,7 @@
         {% for budget in budgets %}
             <div class="card">
                 <div class="content">
-                    <div class="header">{{ budget.name }}</div>
+                    <div class="header"><a href="/budgets/show?id={{ budget.id }}">{{ budget.name }}</a></div>
                     {% if budget.created_at %}
                         <div class="meta">Создан {{ budget.created_at | date ('d.m.Y') }}</div>
                     {% endif %}

@@ -6,7 +6,7 @@ namespace Service\Budget\Storage;
 
 use Base\Storage\GoalsBasicStorage;
 
-class BudgetOwners extends GoalsBasicStorage
+class BudgetOwnersStorage extends GoalsBasicStorage
 {
     protected function getTableName() : string
     {

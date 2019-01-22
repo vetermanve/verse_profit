@@ -1,0 +1,50 @@
+{% extends _layout %}
+
+{% block content %}
+    <p><a href="/budgets">&larr; Все бюджеты</a></p>
+    
+    {% if(message) %}
+        <div class="ui success message">
+            {{ message }}
+        </div>
+        <p></p>
+    {% endif %}
+    
+    <h1 class="ui header">
+        {{ budget.name }}
+        <div class="sub header">{{ budget.description ? budget.description : '' }}</div>
+    </h1>
+
+    <p>
+    <h2>Участники бюджета</h2>
+    <div class="ui cards">
+        {% for user in ownerUsers %}
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ user.name }}</div>
+                    <div class="meta">{{ user.nickname ? '@' ~ user.nickname.nickname : '' }}</div>
+                    {#<div class="description"></div>#}
+                </div>
+                <div class="extra content">
+                    <a href="/budgets/removeFromBudget?id={{ budget.id }}&user_id={{ user.id }}" class="ui button">Убрать из бюджета</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <h2>Добавить участника</h2>
+    <div class="ui cards">
+        {% for user in friends %}
+            <div class="card">
+                <div class="content">
+                    <div class="header">{{ user.name }}</div>
+                    <div class="meta">{{ user.nickname ? '@' ~ user.nickname.nickname : '' }}</div>
+                    {#<div class="description"></div>#}
+                </div>
+                <div class="extra content">
+                    <a href="/budgets/addToBudget?id={{ budget.id }}&user_id={{ user.id }}" class="ui button">Добавить в бюджет</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </p>
+{% endblock %}
