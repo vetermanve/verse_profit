@@ -6,19 +6,42 @@ namespace App\Plans\Controller;
 
 use Base\Controller\BasicController;
 use Service\Balance\BalanceService;
+use Service\Plan\Model\PlanStatus;
 use Service\Plan\Model\PlanModel;
 use Service\Plan\PlansService;
 
 class Plans extends BasicController
 {
     
+    private function _getMenu()
+    {
+        return [
+            ''                    => 'Активные планы',
+            PlanStatus::DELETED   => 'Удаленные планы',
+            PlanStatus::COMPLETED => 'Завершенные планы',
+        ];
+    }
+    
     public function index()
     {
         $budgetId = $this->_budgetId;
         $date     = $this->p('date', strtotime('+1 day'));
+        $status   = (string)$this->p('status');
         
         $plansService = new PlansService();
-        $plans        = $plansService->getPlans($budgetId);
+        
+        if ($status) {
+            $statusesToShow = [
+                $status
+            ];
+        } else {
+            $statusesToShow = [
+                PlanStatus::PLANNED,
+                PlanStatus::CREATED,
+            ];
+        }
+        
+        $plans = $plansService->getPlansWithStatuses($budgetId, $statusesToShow);
         
         $balanceService = new BalanceService();
         $balances       = $balanceService->getBudgetBalances($this->_budgetId);
@@ -28,6 +51,8 @@ class Plans extends BasicController
             'balances' => $balances,
             'message'  => $this->message,
             'date'     => $date,
+            'pageStatus' => $status,
+            'menu'     => $this->_getMenu(),
         ]);
     }
     
@@ -36,34 +61,36 @@ class Plans extends BasicController
         return $this->edit();
     }
     
-    public function show () 
+    public function show()
     {
         $id = $this->p('id');
         
         $service = new PlansService();
-        $plan = $service->getPlan($id);
-    
+        $plan    = $service->getPlan($id);
+        
         $balances = (new BalanceService())->getBudgetBalances($this->_budgetId);
         
         return $this->_render(__FUNCTION__, [
-            'plan' => $plan,
+            'plan'     => $plan,
             'balances' => $balances,
         ]);
     }
     
-    public function edit ()
+    public function edit()
     {
         $id = $this->p('id');
-    
+        
         $budgetId = $this->_budgetId;
         
         $name        = \trim($this->p('name'));
         $dateRaw     = $this->p('date');
-        $date        = strtotime($dateRaw, time() - (new \DateTimeZone($this->_user['timezone']))->getOffset(new \DateTime())) ?? time();
+        $date        = strtotime($dateRaw,
+                time() - (new \DateTimeZone($this->_user['timezone']))->getOffset(new \DateTime())) ?? time();
         $amount      = $this->p('amount');
         $balanceFrom = $this->p('balance_from');
         $balanceTo   = $this->p('balance_to');
-    
+        $status      = $this->p('status', PlanStatus::CREATED);
+        
         $service = new PlansService();
         
         if ($name) {
@@ -74,15 +101,16 @@ class Plans extends BasicController
                 PlanModel::BUDGET_ID    => $budgetId,
                 PlanModel::BALANCE_FROM => $balanceFrom,
                 PlanModel::BALANCE_TO   => $balanceTo,
+                PlanModel::STATUS       => $status,
             ];
-    
+            
             if ($id) {
                 $updatePlan = $service->updatePlan($id, $plan);
                 
                 $this->message = $updatePlan ? 'План обновелен!' : 'Не удалось обновить план :(';
                 
                 if ($updatePlan) {
-                   $plan = $updatePlan; 
+                    $plan = $updatePlan;
                 }
             } else {
                 $createdPlan = $service->addPlan($plan);
@@ -96,15 +124,35 @@ class Plans extends BasicController
         } else {
             $plan = $service->getPlan($id);
         }
-                
+        
         $balances = (new BalanceService())->getBudgetBalances($this->_budgetId);
-    
+        $statuses = $service->getPlanStatuses();
+        
         return $this->_render(__FUNCTION__, [
             'action'   => isset($plan[PlanModel::ID]) ? 'edit' : 'add',
             'plan'     => $plan,
             'balances' => $balances,
             'message'  => $this->message,
+            'statuses' => $statuses,
         ]);
+    }
+    
+    public function complete()
+    {
+        $id = $this->p('id');
+        if ($id) {
+            $service = new PlansService();
+            
+            $bind = [
+                PlanModel::STATUS => PlanStatus::DELETED
+            ];
+            
+            if ($service->updatePlan($id, $bind)) {
+                $this->message = 'План завершен!';
+            }
+        }
+        
+        return $this->show();
     }
     
     public function delete()
@@ -112,12 +160,17 @@ class Plans extends BasicController
         $id = $this->p('id');
         if ($id) {
             $service = new PlansService();
-            if ($service->removePlan($id)) {
+            
+            $bind = [
+                PlanModel::STATUS => PlanStatus::DELETED
+            ];
+            
+            if ($service->updatePlan($id, $bind)) {
                 $this->message = 'План удален!';
             }
         }
         
-        return $this->index();
+        return $this->show();
     }
     
     protected function getClassDirectory()

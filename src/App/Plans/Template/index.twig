@@ -5,7 +5,7 @@
     <h1>Запланировать</h1>
     {% include "_edit.twig" with { 'balances' : balances , 'action' : 'add' } %}
 
-    <h1>Планы </h1>
+    <h1>{{ menu[pageStatus] ?: 'Планы' }}</h1>
     <div class="ui cards">
         {% for plan in plans %}
             <div class="card">
@@ -41,6 +41,13 @@
                     <a href="/plans/show?id={{ plan.id }}" class="ui button">Посмотреть</a>
                 </div>
             </div>
+        {% endfor %}
+    </div>
+    <br>
+    <div class="segment">
+        <h2>Другие планы</h2>
+        {% for status, name in menu %}
+            <a href="/plans/?status={{ status }}">{{ name }}</a>
         {% endfor %}
     </div>
 {% endblock %}
