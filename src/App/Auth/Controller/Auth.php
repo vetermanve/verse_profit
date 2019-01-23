@@ -140,6 +140,43 @@ class Auth extends BasicController
         ]);
     }
     
+    public function addTelegram () 
+    {
+        $id = $this->p('id');
+        $codeCheck = $this->p('code');
+        
+        // test stub
+        $code = 'test';
+        $botName = 'goals_test_bot';
+        
+        // logic
+    
+        if ($codeCheck) {
+            if ($code === $codeCheck) {
+                $this->message = 'Код введен верно, поздравляю!';
+            }  else {
+                $this->message = 'C кодом что-то не так, попробуй еще раз';
+            }
+        } else if ($id) {
+            $notifications = new NotificationService();
+            $res = $notifications->sendTelegramMessage(NotificationTypes::CHANNEL_VERIFY, $id, [
+                'code' => $code,
+            ]);
+            
+            if ($res) {
+                $this->message = 'Сообщение отправлено';
+            } else {
+                $this->message = 'А ты уверен что ты уже обратился к боту?';
+            }
+        }
+        
+        return $this->_render(__FUNCTION__, [
+            'message' => $this->message,
+            'id' => $id,
+            'botName' => $botName
+        ]);
+    }
+    
     
     protected function getClassDirectory()
     {

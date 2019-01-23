@@ -7,6 +7,7 @@ namespace Service\Notification;
 use Psr\Log\LoggerAwareTrait;
 use Service\Notification\Render\EmailNotificationCreator;
 use Service\Notification\Render\Exception\RenderException;
+use Service\Notification\Render\TelegramNotificationCreator;
 use Service\Notification\Transport\NotificationTransport;
 use Verse\Di\Env;
 use Verse\Modular\ModularContextProto;
@@ -31,6 +32,37 @@ class NotificationService
     public function __construct(ModularContextProto $context = null)
     {
         $this->_context = $context ?? Env::getContainer()->bootstrap(RunContext::class);
+    }
+    
+    public function sendTelegramMessage ($type, $to, $params) 
+    {
+        $notification = null;
+    
+        $renderer = new TelegramNotificationCreator();
+    
+        // create notification
+        try {
+            $notification = $renderer->create($type, $params);
+        } catch (RenderException $exception) {
+            $this->_log('Could not render telegram notification', [
+                'type' => $type,
+                'to'   => $to,
+                'e'    => $exception,
+            ]);
+        }
+    
+        // set receiver
+        if ($notification !== null) {
+            $notification->to = $to;
+        } else {
+            return false;
+        }
+    
+        // drop it to transport
+        $transport = new NotificationTransport();
+        $transport->setConfig($this->_getTransportConfig());
+    
+        return $transport->sendTelegramNotofication($notification);
     }
     
     public function sendEmail($type, $to, $params) : bool 
@@ -82,6 +114,9 @@ class NotificationService
             'domain' => $this->_context->getScope('env', 'MAILGUN_DOMAIN', $this->_domain),
             'mailgun' => [
                 'app_key' => $this->_context->getScope('env', 'MAILGUN_APP_KEY')
+            ],
+            'telegram' => [
+                'app_key' => $this->_context->getScope('env', 'TELEGRAM_APP_KEY')
             ]
         ];
     }
