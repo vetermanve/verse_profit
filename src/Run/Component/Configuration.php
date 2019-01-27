@@ -4,6 +4,7 @@
 namespace Run\Component;
 
 
+use Psr\Log\LoggerInterface;
 use Verse\Di\Env;
 use Verse\Run\Component\RunComponentProto;
 use Verse\Run\RunContext;
@@ -26,5 +27,6 @@ class Configuration extends RunComponentProto
         $this->context->set('env', $_ENV);
         
         Env::getContainer()->setModule(RunContext::class, $this->context);
+        Env::getContainer()->setModule(LoggerInterface::class, $this->runtime);
     }
 }

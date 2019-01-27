@@ -13,12 +13,15 @@ use Verse\Run\Controller\BaseControllerProto;
 
 abstract class BasicController extends BaseControllerProto
 {
-    const STATE_KEY_USER_ID           = 'user_id';
-    const STATE_KEY_BUDGET_ID         = 'budget_id';
-    const STATE_AUTHORISE_DEFAULT_TTL = 2073600; // 24 days
+    protected const STATE_KEY_USER_ID           = 'user_id';
+    protected const STATE_KEY_BUDGET_ID         = 'budget_id';
+    protected const STATE_AUTHORISE_DEFAULT_TTL = 2073600; // 24 days
 
-    const DEFAULT_USER_ID = '';
-    const DEFAULT_USER    = [];
+    protected const DEFAULT_USER_ID = '';
+    protected const DEFAULT_USER    = [];
+    
+    protected const DEFAULT_BUDGET_ID = '';
+    protected const DEFAULT_BUDGET    = [];
 
     /**
      * @var RendererInterface
@@ -29,9 +32,9 @@ abstract class BasicController extends BaseControllerProto
 
     protected $_user = self::DEFAULT_USER;
 
-    protected $_budgetId;
+    protected $_budgetId = self::DEFAULT_BUDGET_ID;
 
-    protected $_budget;
+    protected $_budget = self::DEFAULT_BUDGET;
 
     /**
      * @var ChannelStateSecurityWrapperInterface
@@ -50,7 +53,7 @@ abstract class BasicController extends BaseControllerProto
                 'Счета'     => '/balances/',
                 'Транзакции'=> '/balances-transactions/',
                 'Друзья'    => '/relations-users/',
-                'Бюджеты'   => '/budgets/',
+//                'Бюджеты'   => '/budgets/',
             ];
         }
 
@@ -124,11 +127,29 @@ abstract class BasicController extends BaseControllerProto
         ];
     }
     
-    public function authoriseUser ($userId) 
+    protected function authoriseUser ($userId, $budgetId = null) 
     {
         $this->_userId = $userId;
         $this->_secureState->setState(self::STATE_KEY_USER_ID, $this->_userId, self::STATE_AUTHORISE_DEFAULT_TTL);
+        
+        if ($budgetId) {
+            $this->_budgetId = $budgetId;
+            $this->_secureState->setState(self::STATE_KEY_BUDGET_ID, $this->_budgetId, self::STATE_AUTHORISE_DEFAULT_TTL);
+        }
+        
         $this->loadUser();
+    }
+    
+    protected function unAuthoriseUser () 
+    {
+        $this->_secureState->setState(self::STATE_KEY_USER_ID, null, 3600);
+        $this->_secureState->setState(self::STATE_KEY_BUDGET_ID, null, 3600);
+    
+        $this->_userId   = self::DEFAULT_USER_ID;
+        $this->_user     = self::DEFAULT_USER;
+        
+        $this->_budgetId = self::DEFAULT_BUDGET_ID;
+        $this->_budget   = self::DEFAULT_BUDGET;
     }
 
     public function loadUser()

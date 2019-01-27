@@ -6,6 +6,8 @@ namespace Service\Notification\Transport;
 
 use Service\Notification\Model\AbstractNotification;
 use Service\Notification\Transport\Channel\EmailMailGunChannel;
+use Service\Notification\Transport\Channel\NotificationChannelInterface;
+use Service\Notification\Transport\Channel\TelegramBotChannel;
 
 class NotificationTransport
 {
@@ -17,7 +19,14 @@ class NotificationTransport
         return $channel->send($notification);
     }
     
-    private function _getEmailChannel() {
+    public function sendTelegramNotofication (AbstractNotification $notification) : bool 
+    {
+        $channel = $this->_getTelegramChannel();
+        return $channel->send($notification);
+    }
+    
+    private function _getEmailChannel() : NotificationChannelInterface
+    {
         $config = [
             EmailMailGunChannel::CONFIG_DOMAIN => $this->config['domain'],
             EmailMailGunChannel::CONFIG_APP_KEY => $this->config['mailgun']['app_key'],
@@ -25,6 +34,14 @@ class NotificationTransport
         
         $channel = new EmailMailGunChannel();
         $channel->setConfig($config);
+        
+        return $channel;
+    }
+    
+    private function _getTelegramChannel() : NotificationChannelInterface
+    {
+        $channel = new TelegramBotChannel();
+        $channel->setAccessKey($this->config['telegram']['app_key']);
         
         return $channel;
     }

@@ -1,0 +1,39 @@
+{% extends _layout %}
+
+{% block content %}
+    {% include '_styles.twig' %}
+        <div class="ui middle aligned center aligned grid" id="login-form">
+            <div class="column">
+                <h2 class="ui teal image header">
+                    <i class="lightbulb icon"></i>
+                    <div class="content">
+                        Привяжи Telegram
+                    </div>
+                </h2>
+                <form class="ui large form " action="/auth/addTelegram" method="post">
+                    <input type="hidden" name="submit" value="1"/>
+                    <div class="ui stacked segment">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="mail icon"></i>
+                                <input type="text" name="id" value="{{ id }}" placeholder="Telegram id">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="text" name="code" placeholder="Check code">
+                            </div>
+                        </div>
+                        <input class="ui fluid large teal submit button" type="submit" value="Проверить"/>
+                    </div>
+
+                    <div class="ui message">{{ message }}</div>
+                </form>
+
+                <div class="ui message">
+                    Перед тем как отправить эту форму добавь себе бота <a href="https://t.me/{{ botName }}">@{{ botName }}</a>
+                </div>
+            </div>
+        </div>
+{% endblock %}

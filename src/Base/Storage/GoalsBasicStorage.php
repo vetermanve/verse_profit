@@ -39,8 +39,14 @@ abstract class GoalsBasicStorage extends SimpleStorage
         $adapter->setDatabase($this->context->get(self::DB, 'local-database'));
         $adapter->setDataRoot($this->context->get(self::ROOT, 'jbase'));
         $adapter->setResource($this->getTableName());
+        $adapter->setPrimaryKey($this->getPrimaryKey());
 
         $this->diContainer->setModule(StorageDependency::DATA_ADAPTER, $adapter);
+    }
+    
+    protected function getPrimaryKey ()
+    {
+        return 'id';
     }
     
     abstract protected function getTableName() : string;

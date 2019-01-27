@@ -6,7 +6,9 @@ namespace Service\Budget;
 
 use Service\Budget\Model\BudgetModel;
 use Service\Budget\Model\BudgetOwnersModel;
+use Service\Budget\Model\BudgetSelectionModel;
 use Service\Budget\Storage\BudgetOwnersStorage;
+use Service\Budget\Storage\BudgetSelectionStorage;
 use Service\Budget\Storage\BudgetStorage;
 use Verse\Run\Util\Uuid;
 use Verse\Storage\Spec\Compare;
@@ -57,7 +59,7 @@ class BudgetService
         $relationsIds = array_column($budgetRelations, BudgetOwnersModel::ID);
         
         foreach ($relationsIds as $relationId) {
-            $budgetOwnersStorage->write()->remove($relationId, __METHOD__);    
+            $budgetOwnersStorage->write()->remove($relationId, __METHOD__);
         }
         
         return $budgetRelations;
@@ -102,5 +104,36 @@ class BudgetService
         }
         
         return false;
+    }
+    
+    public function setSelectedBudgetIdForUserId($userId, $budgetId)
+    {
+        $storage = new BudgetSelectionStorage();
+        
+        $currentSelection = $storage->read()->get($userId, __METHOD__);
+        
+        if (!$currentSelection) {
+            $bind = [
+                BudgetSelectionModel::USER_ID => $userId,
+                BudgetSelectionModel::BUDGET_ID => $budgetId,
+            ];
+    
+            $result = $storage->write()->insert($userId, $bind, __METHOD__);
+        } else {
+            $bind = [
+                BudgetSelectionModel::BUDGET_ID => $budgetId,
+            ];
+            
+            $result = $storage->write()->update($userId, $bind, __METHOD__);
+        }
+        
+        return $result;
+    }
+    
+    public function getSelectedBudgetId ($userId) 
+    {
+        $storage = new BudgetSelectionStorage();
+        $result = $storage->read()->get($userId, __METHOD__);
+        return $result[BudgetSelectionModel::BUDGET_ID] ?? null;
     }
 }

@@ -32,7 +32,8 @@
                 {% endfor %}
                 
                 <div class="right menu">
-                    <a  class="item" href="/profile">{{ _user.name }} {{ _budget ? '(' ~ _budget.name ~ ')' : '' }}</a>
+                    <a class="item"  href="/profile">{{ _user.name }}</a>
+                    <a class="item" href="/budgets">{{ _budget ? _budget.name : "Выбери бюджет"}}</a>
                     {% if _userId %}
                     <a class="ui item" href="/auth/logout">
                         Выйти

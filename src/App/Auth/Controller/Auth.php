@@ -5,9 +5,13 @@ namespace App\Auth\Controller;
 
 
 use Base\Controller\BasicController;
+use Process\Auth\AuthProcess;
+use Process\Auth\AuthProcessContainer;
+use Process\Auth\AuthProcessContext;
 use Service\Auth\AuthService;
 use Service\Auth\Model\KeypairModel;
 use Service\Auth\Model\KeyTypes;
+use Service\Budget\BudgetService;
 use Service\Notification\NotificationService;
 use Service\Notification\NotificationTypes;
 
@@ -15,21 +19,34 @@ class Auth extends BasicController
 {
     public function index()
     {
-        $email       = $this->p('email');
-        $password    = $this->p('password');
-        $isSubmitted = (bool)$this->p('submit');;
+        $email       = trim($this->p('email'));
+        $password    = trim($this->p('password'));
         
-        $authService = new AuthService();
-        $userId      = $authService->getUserIdByPair(KeyTypes::EMAIL, $email, $password);
-        $message     = '';
+        $message = '';
         
-        if ($userId) {
-            $this->authoriseUser($userId);
-        } else {
-            if ($isSubmitted) {
+        if ($email && $password) {
+            $authService = new AuthService();
+            
+            $userId = $authService->getUserIdByPair(KeyTypes::EMAIL, $email, $password);
+            
+            if ($userId) {
+                $authContext = new AuthProcessContext();
+                $authContext->setBudgetService(new BudgetService());
+                $authContext->set(AuthProcessContext::USER_ID, $userId);
+            
+                $processor = (new AuthProcess())->getAuthProcess($authContext);
+                $processor->init();
+                $processor->run();
+                
+                $resultContainer = $processor->getContainer();
+                $budgetId = $resultContainer->data[AuthProcessContainer::USER_CURRENT_BUDGET];
+                
+                $this->authoriseUser($userId, $budgetId);
+            } else {
                 $message = 'Email или пароль введен не верно.';
             }
         }
+        
         
         return $this->_render('login', [
             'title'      => 'Авторизация',
@@ -41,12 +58,7 @@ class Auth extends BasicController
     
     public function logout()
     {
-        $this->_secureState->setState(self::STATE_KEY_USER_ID, null, 3600);
-        $this->_secureState->setState(self::STATE_KEY_BUDGET_ID, null, 3600);
-        
-        $this->_user     = self::DEFAULT_USER;
-        $this->_userId   = self::DEFAULT_USER_ID;
-        $this->_budgetId = null;
+        $this->unAuthoriseUser();
         
         return $this->_render('login', [
             'title' => 'Ты успешно вышел из системы!',
@@ -137,6 +149,45 @@ class Auth extends BasicController
             'success'  => $success,
             'password' => $password,
             'email'    => $email,
+        ]);
+    }
+    
+    public function addTelegram()
+    {
+        $id        = $this->p('id');
+        $codeCheck = $this->p('code');
+        
+        // test stub
+        $code    = 'test';
+        $botName = 'goals_test_bot';
+        
+        // logic
+        
+        if ($codeCheck) {
+            if ($code === $codeCheck) {
+                $this->message = 'Код введен верно, поздравляю!';
+            } else {
+                $this->message = 'C кодом что-то не так, попробуй еще раз';
+            }
+        } else {
+            if ($id) {
+                $notifications = new NotificationService();
+                $res           = $notifications->sendTelegramMessage(NotificationTypes::CHANNEL_VERIFY, $id, [
+                    'code' => $code,
+                ]);
+                
+                if ($res) {
+                    $this->message = 'Сообщение отправлено';
+                } else {
+                    $this->message = 'А ты уверен что ты уже обратился к боту?';
+                }
+            }
+        }
+        
+        return $this->_render(__FUNCTION__, [
+            'message' => $this->message,
+            'id'      => $id,
+            'botName' => $botName
         ]);
     }
     
