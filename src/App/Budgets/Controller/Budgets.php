@@ -140,9 +140,8 @@ class Budgets extends BasicController
     
     private function selectBudget($budgetId)
     {
-        $this->_budgetId = $budgetId;
-        $this->_secureState->setState(self::STATE_KEY_BUDGET_ID, $this->_budgetId, self::STATE_AUTHORISE_DEFAULT_TTL);
-        $this->loadUser();
+        $this->authoriseUser($this->_userId, $budgetId);
+        $this->getService()->setSelectedBudgetIdForUserId($this->_userId, $budgetId);
     }
     
     protected function getClassDirectory()
