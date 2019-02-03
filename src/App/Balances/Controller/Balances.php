@@ -133,13 +133,15 @@ class Balances extends BasicController
     {
         $balanceId     = $this->p('balance_to_id');
         $balanceFromId = $this->p('balance_from_id');
-        $amount        = (float)$this->p('amount');
+        $amountString  = (string)$this->p('amount');
         $description   = $this->p('description');
+        
+        $amount = $amountString ? (float)preg_replace('/[,.]+/', '.', preg_replace('/[^0-9\.,]/', '', $amountString)) : 0;
         
         if ($amount) {
             $balanceService = new BalanceService();
-            $res            = $balanceService->addTransactionAndMovements($amount, $description, $balanceId,
-                $balanceFromId);
+            
+            $res = $balanceService->addTransactionAndMovements($amount, $description, $balanceId, $balanceFromId);
             
             if ($res) {
                 $this->message = 'Транзакция сохранена!';
