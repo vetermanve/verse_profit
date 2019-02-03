@@ -150,8 +150,6 @@ class Balances extends BasicController
             }
         }
         
-        $this->message = $amount;
-        
         return $this->show();
     }
     
