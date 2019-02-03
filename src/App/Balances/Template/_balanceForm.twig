@@ -1,0 +1,28 @@
+{% if(message) %}
+    <div class="ui success message">
+        {{ message }}
+    </div>
+{% endif %}
+
+<div class="ui form">
+    <form action="/balances/{{ action }}" method="post">
+        <input type="hidden" name="id" value="{{ balance.id }}"/>
+        <div class="field">
+            <label>Название</label>
+            <input type="text" name="name" placeholder="Название" value="{{ balance.name }}"/>
+        </div>
+        <div class="field">
+            <label for="type">Тип</label>
+            <select name="type" id="type" class="ui dropdown">
+                {% for balanceTypeId, balanceTypeName  in balanceTypes %}
+                    <option value="{{ balanceTypeId }}" {{ balanceTypeId == balance.type ? 'selected' : '' }} >{{ balanceTypeName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if action == 'add' %}
+            <button class="ui button" type="submit">Создать счет</button>
+        {% else %}
+            <button class="ui button" type="submit">Обновить счет</button>
+        {% endif %}
+    </form>
+</div>

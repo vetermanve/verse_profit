@@ -1,0 +1,7 @@
+{% extends _layout %}
+
+{% block content %}
+<p><a href="/balances/">&larr; Все счета</a></p>
+<h1><a href="/balances/show?id={{ balance.id }}">{{ balance.name }}</a></h1>
+    {% include '_balanceForm.twig' %}
+{% endblock %}

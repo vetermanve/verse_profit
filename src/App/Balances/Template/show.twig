@@ -1,7 +1,7 @@
 {% extends _layout %}
 
 {% block content %}
-    <p><a href="/balances">&larr; Все счета</a></p>
+    <p><a href="/balances/">&larr; Все счета</a></p>
     <h1><a href="/balances/show?id={{ balance.id }}">{{ balance.name }}</a></h1>
     <div class="ui stackable two column grid">
         <div class="stretched row">
@@ -13,7 +13,8 @@
             </div>
             <div class="column">
                 <div class="ui segment">
-                    <a href="/balances/archive?id={{ balance.id }}">Архивировать счет</a>
+                    <a href="/balances/archive?id={{ balance.id }}">Архивировать счет</a><br>
+                    <a href="/balances/edit?id={{ balance.id }}">Изменить счет</a>
                 </div>
             </div>
         </div>

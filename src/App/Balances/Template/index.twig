@@ -3,13 +3,6 @@
 {% block content %}
 
     <h1>Счета</h1>
-    {% if(message) %}
-        <div class="ui success message">
-            {{ message }}
-        </div>
-        <p></p>
-    {% endif %}
-
 
     {% for type, balances in balancesByTypes %}
         {% if(balances) %}
@@ -30,25 +23,7 @@
         {% endif %}
     {% endfor %}
 
-
     <h2>Создать счет</h2>
-    <div class="ui form">
-        <form action="/balances/add" method="post">
-            <div class="field">
-                <label>Название</label>
-                <input type="text" name="name" placeholder="Название"/>
-            </div>
-            <div class="field">
-                <label for="type">Тип</label>
-                <select name="type" id="type" class="ui dropdown">
-                    {% for balanceTypeId, balanceTypeName  in balanceTypes %}
-                        <option value="{{ balanceTypeId }}">{{ balanceTypeName }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button class="ui button" type="submit">Создать счет</button>
-        </form>
-    </div>
-
+    {% include '_balanceForm.twig' with { action : 'add' } %}
     
 {% endblock %}
