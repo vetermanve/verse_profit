@@ -39,26 +39,5 @@
         {% endfor %}
     </div>
     <h2>Создать новый бюджет</h2>
-    {% if(message) %}
-        <p>{{ message }}</p>
-    {% endif %}
-    <div class="ui form">
-        <form action="/budgets/add" method="post">
-            <div class="field">
-                <label>Название</label>
-                <input type="text" name="name" placeholder="Название"/>
-            </div>
-            <div class="field">
-                <label>Описание</label>
-                <input type="text" name="desc" placeholder="Описание"/>
-            </div>
-            <div class="field">
-                <div class="ui checkbox">
-                    <input type="checkbox" tabindex="0" class="hidden" id="check-switch" name="switch">
-                    <label for="check-switch">Сразу переключиться на этот бюджет</label>
-                </div>
-            </div>
-            <button class="ui button" type="submit">Сохранить</button>
-        </form>
-    </div>
+    {% include '_budgetForm.twig' with { action : 'add' } %}
 {% endblock %}
