@@ -161,21 +161,46 @@ class Balances extends BasicController
 
         $balanceToTransferDifference = $this->p('balance_from_id');
 
-        $targetAmount = $targetAmount ? (float)preg_replace('/[,.]+/', '.', preg_replace('/[^0-9\.,]/', '', $targetAmount)) : 0;
+        $targetAmount = $targetAmount ? (float)preg_replace('/[,.]+/', '.', preg_replace('/[^0-9\.,-]/', '', $targetAmount)) : 0;
 
         $balanceService = new BalanceService();
         $balance = $balanceService->getBalance($balanceId);
         $balanceAmount = $balance[BalanceModel::AMOUNT];
 
-        $difference = $balanceAmount - $targetAmount;
+        $action = null;
+        $difference = 0;
 
-        if ($difference) {
+        switch (true) {
+                 // target amount positive, need to add money
+            case $targetAmount > 0 && $targetAmount > $balanceAmount:
+                $action = 'add';
+                $difference = $targetAmount - $balanceAmount;
+                break;
+
+                // target amout positive, need to spend money
+            case $targetAmount > 0 && $targetAmount < $balanceAmount:
+                $action = 'reduce';
+                $difference = $balanceAmount - $targetAmount;
+                break;
+                // target amount negative, need to spend
+            case $targetAmount <= 0 && $targetAmount < $balanceAmount:
+                $action = 'reduce';
+                $difference = $balanceAmount - $targetAmount;
+                break;
+                // target amount negative, need to add
+            case $targetAmount <= 0 && $targetAmount > $balanceAmount:
+                $action = 'add';
+                $difference = $targetAmount - $balanceAmount;
+                break;
+        }
+
+        if ($action && $difference) {
             $res = null;
 
-            if ($difference > 0) {
+            if ($action === 'add') {
+                $res = $balanceService->addTransactionAndMovements($difference, $description, $balanceId, $balanceToTransferDifference);
+            } else {
                 $res = $balanceService->addTransactionAndMovements($difference, $description, $balanceToTransferDifference, $balanceId);
-            } else if ($difference < 0) {
-                $res = $balanceService->addTransactionAndMovements(-$difference, $description, $balanceId, $balanceToTransferDifference);
             }
 
             if ($res) {
