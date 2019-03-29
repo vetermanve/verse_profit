@@ -120,3 +120,7 @@ small, small a {
 .ui.grid.compact>.column {
     padding: 0.2rem 1rem !important;
 }
+
+.menu .item {
+    cursor: pointer;
+}

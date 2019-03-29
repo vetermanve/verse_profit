@@ -7,7 +7,7 @@
         <div class="stretched row">
             <div class="column">
                 <div class="ui segment">
-                    Баланс: <b>{{ balance.amount | number_format(2, '.', ' ')  }}</b><br>
+                    Баланс: <b>{{ balance.amount | number_format(2, '.', ' ') }}</b><br>
                     Тип счета: {{ balanceTypes[balance.type] }}
                 </div>
             </div>
@@ -28,34 +28,82 @@
     {% endif %}
 
     <h2>Добавить внесение</h2>
-    <div class="ui form">
-        <form action="/balances/addTransaction" method="post">
-            <input type="hidden" name="balance_to_id" value="{{ balance.id }}"/>
-            <div class="field">
-                <label>В связи с чем?</label>
-                <input type="text" name="description" placeholder="Описание" value="{{ bind.description }}"/>
-            </div>
-            <div class="field">
-                <label>Сколько?</label>
-                <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
-            </div>
-            {#<div class="field">#}
-            {#<label>Когда?</label>#}
-            {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
-            {#</div>#}
-            <div class="field">
-                <label for="type">Со счета</label>
-                <select name="balance_from_id" id="type" class="ui dropdown search">
-                    <option value="">Из космоса</option>
-                    {% for globalBalance  in allBalances %}
-                        {% if(globalBalance.id != balance.id) %}
-                            <option value="{{ globalBalance.id }}">{{ globalBalance.name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <button class="ui button" type="submit">Добавить</button>
-        </form>
+    <div class="ui top attached tabular menu">
+        <div class="item active" data-tab="income">Получил сюда</div>
+        <div class="item" data-tab="expense">Потратил отсюда</div>
+        <div class="item" data-tab="set-balance">Задать состояние</div>
+    </div>
+    <div class="ui bottom attached active tab segment" data-tab="income">
+        <div class="ui form">
+            <form action="/balances/addTransaction" method="post">
+                <input type="hidden" name="balance_to_id" value="{{ balance.id }}"/>
+                <div class="field">
+                    <label>В связи с чем?</label>
+                    <input type="text" name="description" placeholder="Описание" value="{{ bind.description }}"/>
+                </div>
+                <div class="field">
+                    <label>Сколько?</label>
+                    <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
+                </div>
+                {#<div class="field">#}
+                {#<label>Когда?</label>#}
+                {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
+                {#</div>#}
+                <div class="field">
+                    <label for="type">С какого счета?</label>
+                    {% include '_balanceSelector.twig' with {"field" : "balance_from_id", "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+                </div>
+                <button class="ui button" type="submit">Добавить</button>
+            </form>
+        </div>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="expense">
+        <div class="ui form">
+            <form action="/balances/addTransaction" method="post">
+                <input type="hidden" name="balance_from_id" value="{{ balance.id }}"/>
+                <div class="field">
+                    <label>В связи с чем?</label>
+                    <input type="text" name="description" placeholder="Описание" value="{{ bind.description }}"/>
+                </div>
+                <div class="field">
+                    <label>Сколько?</label>
+                    <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
+                </div>
+                {#<div class="field">#}
+                {#<label>Когда?</label>#}
+                {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
+                {#</div>#}
+                <div class="field">
+                    <label for="type">На какой счет?</label>
+                    {% include '_balanceSelector.twig' with { "field" : "balance_to_id", "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+                </div>
+                <button class="ui button" type="submit">Добавить</button>
+            </form>
+        </div>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="set-balance">
+        <div class="ui form">
+            <form action="/balances/setBalanceAmount" method="post">
+                <input type="hidden" name="balance_to_id" value="{{ balance.id }}"/>
+                <div class="field">
+                    <label>В связи с чем?</label>
+                    <input type="text" name="description" placeholder="Описание" value="{{ bind.description }}"/>
+                </div>
+                <div class="field">
+                    <label>Сколько сейчас на счету?</label>
+                    <input type="text" name="amount" placeholder="Количество" value="{{ bind.amount }}"/>
+                </div>
+                {#<div class="field">#}
+                {#<label>Когда?</label>#}
+                {#<input type="date" name="date" placeholder="Дата" value="{{ bind.date }}"/>#}
+                {#</div>#}
+                <div class="field">
+                    <label for="type">Куда/откуда спишем разницу?</label>
+                    {% include '_balanceSelector.twig' with { "field" : "balance_from_id", "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+                </div>
+                <button class="ui button" type="submit">Добавить</button>
+            </form>
+        </div>
     </div>
 
     <h2>Транзакции</h2>

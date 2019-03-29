@@ -12,42 +12,43 @@
             crossorigin="anonymous"></script>
     <script src="/semantic/semantic.min.js"></script>
     <script>
-      $(document)
-        .ready(function() {
-          $('.ui.dropdown').dropdown({ fullTextSearch: "exact" });
-        })
-      ;
+        $(document)
+            .ready(function () {
+                $('.ui.dropdown').dropdown({fullTextSearch: "exact"});
+                $('.menu .item').tab();
+            })
+        ;
     </script>
 </head>
 <body>
-    <div id="content" class="ui container">
-        <div id="content-pad">
-            <div class="ui secondary pointing stackable menu">
-                {% for pageName, url in _pages %}
-                    {% if (url in _currentPage) %}
-                        <a href="{{ url }}" class="item active">{{ pageName }}</a>
-                    {% else %}
-                        <a href="{{ url }}" class="item">{{ pageName }}</a>
-                    {% endif %}
-                {% endfor %}
-                
-                <div class="right menu">
-                    <a class="item"  href="/profile">{{ _user.name }}</a>
-                    <a class="item" href="/budgets">{{ _budget ? _budget.name : "Выбери бюджет"}}</a>
-                    {% if _userId %}
+<div id="content" class="ui container">
+    <div id="content-pad">
+        <div class="ui secondary pointing stackable menu">
+            {% for pageName, url in _pages %}
+                {% if (url in _currentPage) %}
+                    <a href="{{ url }}" class="item active">{{ pageName }}</a>
+                {% else %}
+                    <a href="{{ url }}" class="item">{{ pageName }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <div class="right menu">
+                <a class="item" href="/profile">{{ _user.name }}</a>
+                <a class="item" href="/budgets">{{ _budget ? _budget.name : "Выбери бюджет" }}</a>
+                {% if _userId %}
                     <a class="ui item" href="/auth/logout">
                         Выйти
                     </a>
-                    {% else %}
+                {% else %}
                     <a class="ui item" href="/auth/">
                         Войти
                     </a>
-                    {% endif %}
-                </div>
+                {% endif %}
             </div>
+        </div>
         {% block content %}
         {% endblock %}
-        </div>
     </div>
+</div>
 </body>
 </html>

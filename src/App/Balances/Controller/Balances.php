@@ -17,16 +17,16 @@ class Balances extends BasicController
     public function index()
     {
         $balanceService = new BalanceService();
-        
+
         $balances = $balanceService->getBudgetBalances($this->_budgetId);
-        
+
         $balancesByTypes = array_combine(array_keys(BalanceType::getValues()),
             array_fill(0, count(BalanceType::getValues()), []));
-        
+
         foreach ($balances as $balance) {
             $balancesByTypes[$balance[BalanceModel::TYPE]][] = $balance;
         }
-        
+
         return $this->_render(__FUNCTION__, [
             // 'balances'     => $balances,
             'balancesByTypes' => $balancesByTypes,
@@ -34,7 +34,7 @@ class Balances extends BasicController
             'message'         => $this->message,
         ]);
     }
-    
+
     public function add()
     {
         $name = $this->p('name');
@@ -48,10 +48,10 @@ class Balances extends BasicController
                 $this->message = 'Не удалось создать счет.';
             }
         }
-        
+
         return $this->index();
     }
-    
+
     public function archive()
     {
         $id             = $this->p('id');
@@ -60,17 +60,17 @@ class Balances extends BasicController
             $res = $balanceService->updateBalance($id, [
                 BalanceModel::STATUS => BalanceStatus::STATUS_ARCHIVED
             ]);
-            
+
             if ($res) {
                 $this->message = 'Баланс успешно архивирован';
             } else {
                 $this->message = 'Не удалось заархивировать баланс';
             }
         }
-        
+
         return $this->index();
     }
-    
+
     public function show()
     {
         $balanceId      = $this->p('id', $this->p('balance_to_id'));
@@ -79,10 +79,10 @@ class Balances extends BasicController
         uasort($transactions, function ($tr1, $tr2) {
             return $tr1[TransactionModel::CREATED_DATE] <= $tr2[TransactionModel::CREATED_DATE] ? 1 : -1;
         });
-        
+
         $balance     = $balanceService->getBalance($balanceId);
         $allBalances = $balanceService->getBudgetBalances($this->_budgetId);
-        
+
         return $this->_render(__FUNCTION__, [
             'message'      => $this->message,
             'balance'      => $balance,
@@ -94,16 +94,16 @@ class Balances extends BasicController
             ],
         ]);
     }
-    
+
     public function edit()
     {
         $id   = $this->p('id');
         $name = trim($this->p('name'));
         $type = $this->p('type');
-        
+
         $balanceService = new BalanceService();
         $balance        = $balanceService->getBalance($id);
-        
+
         if (!$balance) {
             $this->message = 'Баланс не найден';
         } elseif ($name && $type) {
@@ -111,16 +111,16 @@ class Balances extends BasicController
                 BalanceModel::NAME => $name,
                 BalanceModel::TYPE => $type,
             ];
-            
+
             $balance = $balanceService->updateBalance($balance[BalanceModel::ID], $updateBind);
-            
+
             if ($balance) {
                 $this->message = 'Счет удачно обновлен!';
             } else {
                 $this->message = 'Не удалось обновить счет :(';
             }
         }
-        
+
         return $this->_render(__FUNCTION__, [
             'balanceTypes' => BalanceType::getValues(),
             'balance'      => $balance ?? [],
@@ -128,31 +128,66 @@ class Balances extends BasicController
             'message'      => $this->message,
         ]);
     }
-    
+
     public function addTransaction()
     {
         $balanceId     = $this->p('balance_to_id');
         $balanceFromId = $this->p('balance_from_id');
         $amountString  = (string)$this->p('amount');
         $description   = $this->p('description');
-        
+
         $amount = $amountString ? (float)preg_replace('/[,.]+/', '.', preg_replace('/[^0-9\.,]/', '', $amountString)) : 0;
-        
+
         if ($amount) {
             $balanceService = new BalanceService();
-            
+
             $res = $balanceService->addTransactionAndMovements($amount, $description, $balanceId, $balanceFromId);
-            
+
             if ($res) {
                 $this->message = 'Транзакция сохранена!';
             } else {
                 $this->message = 'Не удалось сохранить транзакцию.';
             }
         }
-        
+
         return $this->show();
     }
-    
+
+    public function setBalanceAmount()
+    {
+        $balanceId     = $this->p('balance_to_id');
+        $description   = $this->p('description');
+        $targetAmount  = (string)$this->p('amount');
+
+        $balanceToTransferDifference = $this->p('balance_from_id');
+
+        $targetAmount = $targetAmount ? (float)preg_replace('/[,.]+/', '.', preg_replace('/[^0-9\.,]/', '', $targetAmount)) : 0;
+
+        $balanceService = new BalanceService();
+        $balance = $balanceService->getBalance($balanceId);
+        $balanceAmount = $balance[BalanceModel::AMOUNT];
+
+        $difference = $balanceAmount - $targetAmount;
+
+        if ($difference) {
+            $res = null;
+
+            if ($difference > 0) {
+                $res = $balanceService->addTransactionAndMovements($difference, $description, $balanceToTransferDifference, $balanceId);
+            } else if ($difference < 0) {
+                $res = $balanceService->addTransactionAndMovements(-$difference, $description, $balanceId, $balanceToTransferDifference);
+            }
+
+            if ($res) {
+                $this->message = 'Транзакция сохранена!';
+            } else {
+                $this->message = 'Не удалось сохранить транзакцию.';
+            }
+        }
+
+        return $this->show();
+    }
+
     protected function getClassDirectory()
     {
         return __DIR__;

@@ -1,0 +1,12 @@
+{#
+{% include '_balanceSelector.twig' with {"field" : "field_name" "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+#}
+
+<select name="{{ field }}" id="type" class="ui dropdown search">
+    <option value="">Из космоса</option>
+    {% for balance in balances %}
+        {% if (balance.id != excludeBalanceId) %}
+            <option value="{{ balance.id }}">{{ balance.name }} ({{ balance.amount | number_format(2, '.', '') }})</option>
+        {% endif %}
+    {% endfor %}
+</select>
