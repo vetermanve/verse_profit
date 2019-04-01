@@ -47,12 +47,17 @@ class BalanceService
         return $this->getBalanceStorage()->write()->insert($id, $bind, __METHOD__);
     }
 
-    public function getBudgetBalances($budgetId, $status = BalanceStatus::STATUS_ACTIVE)
+    public function getBudgetBalances($budgetId, $status = null)
     {
-        $balances = $this->getBalanceStorage()->search()->find([
+        $filter = [
             [BalanceModel::BUDGET_ID, Compare::EQ, $budgetId],
-            [BalanceModel::STATUS, Compare::EMPTY_OR_EQ, $status],
-        ], 1000, __METHOD__) ? : [];
+        ];
+
+        if ($status) {
+            $filter[] = [BalanceModel::STATUS, Compare::EMPTY_OR_EQ, $status];
+        }
+
+        $balances = $this->getBalanceStorage()->search()->find($filter, 1000, __METHOD__) ? : [];
 
         return $balances ? array_column($balances, null, BalanceModel::ID) : [];
     }

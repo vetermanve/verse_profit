@@ -6,6 +6,7 @@ namespace App\Plans\Controller;
 
 use Base\Controller\BasicController;
 use Service\Balance\BalanceService;
+use Service\Balance\Model\BalanceStatus;
 use Service\Plan\Model\PlanStatus;
 use Service\Plan\Model\PlanModel;
 use Service\Plan\PlansService;
@@ -44,7 +45,7 @@ class Plans extends BasicController
         $plans = $plansService->getPlansWithStatuses($budgetId, $statusesToShow);
         
         $balanceService = new BalanceService();
-        $balances       = $balanceService->getBudgetBalances($this->_budgetId);
+        $balances       = $balanceService->getBudgetBalances($this->_budgetId, BalanceStatus::ACTIVE);
         
         return $this->_render(__FUNCTION__, [
             'plans'    => $plans,
@@ -125,7 +126,7 @@ class Plans extends BasicController
             $plan = $service->getPlan($id);
         }
         
-        $balances = (new BalanceService())->getBudgetBalances($this->_budgetId);
+        $balances = (new BalanceService())->getBudgetBalances($this->_budgetId, BalanceStatus::ACTIVE);
         $statuses = $service->getPlanStatuses();
         
         return $this->_render(__FUNCTION__, [

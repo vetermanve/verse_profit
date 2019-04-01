@@ -18,7 +18,7 @@ class Balances extends BasicController
     {
         $balanceService = new BalanceService();
 
-        $balances = $balanceService->getBudgetBalances($this->_budgetId);
+        $balances = $balanceService->getBudgetBalances($this->_budgetId, BalanceStatus::ACTIVE);
 
         $balancesByTypes = array_combine(array_keys(BalanceType::getValues()),
             array_fill(0, count(BalanceType::getValues()), []));
@@ -28,7 +28,6 @@ class Balances extends BasicController
         }
 
         return $this->_render(__FUNCTION__, [
-            // 'balances'     => $balances,
             'balancesByTypes' => $balancesByTypes,
             'balanceTypes'    => BalanceType::getValues(),
             'message'         => $this->message,
@@ -58,7 +57,7 @@ class Balances extends BasicController
         $balanceService = new BalanceService();
         if ($id) {
             $res = $balanceService->updateBalance($id, [
-                BalanceModel::STATUS => BalanceStatus::STATUS_ARCHIVED
+                BalanceModel::STATUS => BalanceStatus::ARCHIVED
             ]);
 
             if ($res) {
@@ -82,10 +81,12 @@ class Balances extends BasicController
 
         $balance     = $balanceService->getBalance($balanceId);
         $allBalances = $balanceService->getBudgetBalances($this->_budgetId);
+        $activeBalances = $balanceService->getBudgetBalances($this->_budgetId, BalanceStatus::ACTIVE);
 
         return $this->_render(__FUNCTION__, [
             'message'      => $this->message,
             'balance'      => $balance,
+            'activeBalances' => $activeBalances,
             'allBalances'  => $allBalances,
             'transactions' => $transactions,
             'balanceTypes' => BalanceType::getValues(),

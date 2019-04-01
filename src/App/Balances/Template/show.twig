@@ -51,7 +51,7 @@
                 {#</div>#}
                 <div class="field">
                     <label for="type">С какого счета?</label>
-                    {% include '_balanceSelector.twig' with {"field" : "balance_from_id", "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+                    {% include '_balanceSelector.twig' with {"field" : "balance_from_id", "balances" : activeBalances, "excludeBalanceId" : balance.id} %}
                 </div>
                 <button class="ui button" type="submit">Добавить</button>
             </form>
@@ -75,7 +75,7 @@
                 {#</div>#}
                 <div class="field">
                     <label for="type">На какой счет?</label>
-                    {% include '_balanceSelector.twig' with { "field" : "balance_to_id", "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+                    {% include '_balanceSelector.twig' with { "field" : "balance_to_id", "balances" : activeBalances, "excludeBalanceId" : balance.id} %}
                 </div>
                 <button class="ui button" type="submit">Добавить</button>
             </form>
@@ -99,7 +99,7 @@
                 {#</div>#}
                 <div class="field">
                     <label for="type">Куда/откуда спишем разницу?</label>
-                    {% include '_balanceSelector.twig' with { "field" : "balance_from_id", "balances" : allBalances, "excludeBalanceId" : balance.id} %}
+                    {% include '_balanceSelector.twig' with { "field" : "balance_from_id", "balances" : activeBalances, "excludeBalanceId" : balance.id} %}
                 </div>
                 <button class="ui button" type="submit">Добавить</button>
             </form>
