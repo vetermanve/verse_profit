@@ -22,6 +22,14 @@
         {% if action == 'add' %}
             <button class="ui button" type="submit">Создать счет</button>
         {% else %}
+            <div class="field">
+                <label for="status">Статус</label>
+                <select name="status" id="status" class="ui dropdown">
+                    {% for balanceStatusId, balanceStatusName  in balanceStatuses %}
+                        <option value="{{ balanceStatusId }}" {{ balanceStatusId == balance.status ? 'selected' : '' }} >{{ balanceStatusName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <button class="ui button" type="submit">Обновить счет</button>
         {% endif %}
     </form>

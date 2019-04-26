@@ -101,9 +101,11 @@ class Balances extends BasicController
         $id   = $this->p('id');
         $name = trim($this->p('name'));
         $type = $this->p('type');
+        $status = (int)$this->p('status');
 
         $balanceService = new BalanceService();
         $balance        = $balanceService->getBalance($id);
+        $balanceStatuses = $balanceService->getBalanceStatuses();
 
         if (!$balance) {
             $this->message = 'Баланс не найден';
@@ -112,6 +114,10 @@ class Balances extends BasicController
                 BalanceModel::NAME => $name,
                 BalanceModel::TYPE => $type,
             ];
+
+            if ($status) {
+                $updateBind[BalanceModel::STATUS] = $status;
+            }
 
             $balance = $balanceService->updateBalance($balance[BalanceModel::ID], $updateBind);
 
@@ -127,6 +133,7 @@ class Balances extends BasicController
             'balance'      => $balance ?? [],
             'action'       => 'edit',
             'message'      => $this->message,
+            'balanceStatuses' => $balanceStatuses,
         ]);
     }
 

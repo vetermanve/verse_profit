@@ -239,4 +239,12 @@ class BalanceService
 
         return $transactions;
     }
+
+    public function getBalanceStatuses()
+    {
+        return [
+            BalanceStatus::ACTIVE => 'Активный',
+            BalanceStatus::ARCHIVED => 'Архивирован',
+        ];
+    }
 }
